@@ -89,9 +89,10 @@ bool compute_race_layout(const gba::GbaBus* bus) {
 
     // Race results preserve the live road's display-control and background
     // registers, so the PPU signature alone also matched the timing and
-    // standings screens. Require the stable "LAP" and "TIME" tiles from the
-    // actual race HUD before relocating anything. Pauses and overlays retain
-    // this map underneath their centered UI; results replace it.
+    // standings screens. Require the stable left "LAP" tiles from the actual
+    // race HUD, then accept either top-right "TIME" or the lap-transition
+    // "LAP" variant. Pauses and overlays retain this map underneath their
+    // centered UI; results replace it.
     // Check the canonical top-half HUD map in screen block 7. Live races use
     // block 7 for this map even while the lower Mode 1 phase temporarily
     // selects block 6. Results reverse that arrangement and leave a stale
@@ -99,20 +100,29 @@ bool compute_race_layout(const gba::GbaBus* bus) {
     // still misclassify the lower half of results (and reject live Mode 1).
     constexpr std::size_t map_base = 7u * 0x800u;
     constexpr std::size_t kVramBytes = 96u * 1024u;
-    constexpr unsigned kHudTiles[] = {4, 5, 6, 18, 19, 20};
-    constexpr std::uint16_t kHudValues[] = {
-        0x0044u, 0x0045u, 0x0046u, 0x004Au, 0x004Bu, 0x004Cu};
+    constexpr unsigned kLeftLapTiles[] = {4, 5, 6};
+    constexpr unsigned kRightTextTiles[] = {18, 19, 20};
+    constexpr std::uint16_t kLapValues[] = {0x0044u, 0x0045u, 0x0046u};
+    constexpr std::uint16_t kTimeValues[] = {0x004Au, 0x004Bu, 0x004Cu};
     const std::uint8_t* vram = bus->vram_ptr();
-    if (!vram || map_base + (kHudTiles[5] + 1u) * 2u > kVramBytes)
+    if (!vram || map_base + (kRightTextTiles[2] + 1u) * 2u > kVramBytes)
         return false;
-    for (unsigned i = 0; i < 6; ++i) {
+    for (unsigned i = 0; i < 3; ++i) {
         // Palette-bank and flip attributes are applied while the frame is
         // rendered; the tile identity in bits 0..9 is the stable signature.
         const std::uint16_t entry = read16(vram, static_cast<unsigned>(
-            map_base + kHudTiles[i] * 2u));
-        if ((entry & 0x03FFu) != kHudValues[i]) return false;
+            map_base + kLeftLapTiles[i] * 2u));
+        if ((entry & 0x03FFu) != kLapValues[i]) return false;
     }
-    return true;
+    bool right_time = true;
+    bool right_lap = true;
+    for (unsigned i = 0; i < 3; ++i) {
+        const std::uint16_t entry = read16(vram, static_cast<unsigned>(
+            map_base + kRightTextTiles[i] * 2u)) & 0x03FFu;
+        right_time = right_time && entry == kTimeValues[i];
+        right_lap = right_lap && entry == kLapValues[i];
+    }
+    return right_time || right_lap;
 }
 
 bool race_layout(const gba::GbaBus* bus) {
@@ -130,7 +140,8 @@ bool race_layout(const gba::GbaBus* bus) {
     return cached_race;
 }
 
-void trace_scene_once(bool race, const std::uint8_t* io) {
+void trace_scene_once(bool race, const std::uint8_t* io,
+                      const gba::GbaBus* bus) {
     // This function is reached from the margin tile provider, potentially
     // tens of thousands of times per frame. On Windows getenv() takes the CRT
     // environment lock, so querying it per pixel made adaptive fullscreen
@@ -147,11 +158,22 @@ void trace_scene_once(bool race, const std::uint8_t* io) {
     if (dispcnt == previous_dispcnt && race == previous_race) return;
     previous_dispcnt = dispcnt;
     previous_race = race;
+    constexpr std::size_t map_base = 7u * 0x800u;
+    constexpr unsigned kHudTiles[] = {4, 5, 6, 18, 19, 20};
+    std::uint16_t hud[6] = {};
+    const std::uint8_t* vram = bus ? bus->vram_ptr() : nullptr;
+    if (vram) {
+        for (unsigned i = 0; i < 6; ++i) {
+            hud[i] = read16(vram, static_cast<unsigned>(
+                map_base + kHudTiles[i] * 2u)) & 0x03FFu;
+        }
+    }
     std::fprintf(stderr,
         "[mksc:adaptive-view] race=%d DISPCNT=%04X "
-        "BG=%04X/%04X/%04X/%04X\n",
+        "BG=%04X/%04X/%04X/%04X HUD=%03X/%03X/%03X/%03X/%03X/%03X\n",
         race ? 1 : 0, dispcnt, read16(io, 0x08), read16(io, 0x0A),
-        read16(io, 0x0C), read16(io, 0x0E));
+        read16(io, 0x0C), read16(io, 0x0E), hud[0], hud[1], hud[2],
+        hud[3], hud[4], hud[5]);
 }
 
 int race_tilemap_provider(int bg, int hw_x, int screen_y,
@@ -165,7 +187,7 @@ int race_tilemap_provider(int bg, int hw_x, int screen_y,
 
     const std::uint8_t* io = bus->io().raw();
     const bool race = race_layout(bus);
-    trace_scene_once(race, io);
+    trace_scene_once(race, io, bus);
     gba::g_ws_pillarbox = race ? 0 : 1;
 
     if (race && (hw_x < 0 || hw_x >= 240)) {
