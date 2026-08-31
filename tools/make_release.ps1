@@ -115,6 +115,18 @@ Copy-Item -LiteralPath $mods -Destination $stage -Recurse
     -Toolchain (Join-Path $stage 'overlay_toolchain') -EngineRoot $engine
 if ($LASTEXITCODE -ne 0) { throw "Overlay toolchain staging failed ($LASTEXITCODE)." }
 
+foreach ($requiredStaged in @(
+    (Join-Path $stage 'overlay_toolchain\tcc\tcc.exe'),
+    (Join-Path $stage 'overlay_toolchain\tcc\libtcc.dll'),
+    (Join-Path $stage 'overlay_toolchain\include\overlay_runtime_arm.h'),
+    (Join-Path $stage 'overlay_toolchain\include\overlay_abi.h'),
+    (Join-Path $stage 'overlay_toolchain\include\runtime_arm_types.h')
+)) {
+    if (-not (Test-Path -LiteralPath $requiredStaged)) {
+        throw "Overlay toolchain staging is incomplete: $requiredStaged"
+    }
+}
+
 @"
 # Mario Kart: Super Circuit - GBA static recompilation (Windows x64)
 

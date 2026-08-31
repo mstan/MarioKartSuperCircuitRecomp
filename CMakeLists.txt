@@ -11,6 +11,8 @@ set(RECOMP_UI_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/recomp-ui"
     CACHE PATH "Path to the shared recomp-ui checkout")
 set(GBARECOMP_RUNTIME_UI_ROOT "${RECOMP_UI_ROOT}"
     CACHE PATH "recomp-ui root used by the live GBA runtime adapter")
+set(GBARECOMP_SELFHEAL_RECOMPILE_DEFAULT ON CACHE BOOL
+    "Enable Mario Kart: Super Circuit runtime self-heal sharding by default" FORCE)
 set(GBARECOMP_ENABLE_MODS ON CACHE BOOL
     "Enable Mario Kart: Super Circuit's mod catalog and GBA mod packages" FORCE)
 if(NOT EXISTS "${GBARECOMP_ROOT}/CMakeLists.txt")
