@@ -10,6 +10,10 @@
 Static recompilation of **Mario Kart: Super Circuit** for Windows, with
 optional 60 FPS and Adaptive Widescreen mods.
 
+Special thanks to **antimattur** for the Mario Kart: Super Circuit
+decompilation work and for discovering the 60 FPS patch; that foundation made
+this level of polish possible.
+
 The game ROM and Nintendo GBA BIOS are **not included**. You must provide your
 own legally obtained dumps.
 
@@ -35,7 +39,8 @@ launcher on boot** if you want later launches to go directly into the game.
 Both enhancements are optional and disabled by default:
 
 - **60 FPS Track Rendering** updates race presentation at 60 FPS while
-  preserving the game's underlying logic and timing.
+  preserving the game's underlying logic and timing, based on the patch
+  discovered by **antimattur**.
 - **Adaptive Widescreen** renders additional race content at the sides instead
   of stretching the original 240×160 image.
 
@@ -102,6 +107,9 @@ reports, the PC sampler, the TCP `symbol` query — can be named from the
 as a submodule at `third_party/mksc`. The tracked files under
 [`symbols/`](symbols/README.md) are already imported, so `tools/regen.ps1`
 picks them up automatically; `-NoSymbols` regenerates without them.
+
+Credit to **antimattur** for the Mario Kart: Super Circuit decompilation work
+that made these symbol imports possible.
 
 To re-import after the decomp advances upstream, build it under WSL with
 `tools/decomp/provision.sh` and `tools/decomp/build.sh` (root-free: no
