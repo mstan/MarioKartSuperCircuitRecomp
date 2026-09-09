@@ -124,6 +124,11 @@ data enters this repository or the build; the submodule pins a URL and commit
 rather than vendoring code. Upstream ships no license file, which is why the
 boundary is drawn that tightly.
 
+## License
+
+PolyForm Noncommercial 1.0.0 — see [`LICENSE`](LICENSE). Third-party
+components retain their own licenses.
+
 ## Legal
 
 This is an unofficial, non-commercial preservation and research project. It
