@@ -23,14 +23,16 @@ if(NOT EXISTS "${GBARECOMP_ROOT}/CMakeLists.txt")
 endif()
 
 add_subdirectory("${GBARECOMP_ROOT}" gbarecomp_build EXCLUDE_FROM_ALL)
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/generated/recompiled.cpp")
+set(GBA_GAME_GENERATED_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/generated" CACHE PATH
+    "Generated native corpus (may point at an independent qualification build)")
+if(EXISTS "${GBA_GAME_GENERATED_ROOT}/recompiled.cpp")
     message(FATAL_ERROR
         "Stale monolithic generated/recompiled.cpp found. "
         "Run tools/regen.ps1 with the current gbarecomp before building.")
 endif()
 file(GLOB GAME_GENERATED_SOURCES CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/generated/*.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/generated/*.cpp")
+    "${GBA_GAME_GENERATED_ROOT}/*.c"
+    "${GBA_GAME_GENERATED_ROOT}/*.cpp")
 
 add_executable(MarioKartSuperCircuitRecomp
     src/main.cpp
@@ -67,6 +69,11 @@ target_compile_definitions(MarioKartSuperCircuitRecomp PRIVATE
     GBARECOMP_DEFAULT_DEBUG_PORT=19872
     GBARECOMP_WINDOW_TITLE="MarioKartSuperCircuitRecomp"
     GBARECOMP_DEFAULT_GAME_CONFIG="game.toml")
+if(GBARECOMP_NETPLAY)
+    target_link_libraries(MarioKartSuperCircuitRecomp PRIVATE gbarecomp_netplay)
+    gbarecomp_target_netplay_identity(MarioKartSuperCircuitRecomp "${CMAKE_CURRENT_SOURCE_DIR}" "${GBA_GAME_GENERATED_ROOT}")
+    set_property(SOURCE src/main.cpp APPEND PROPERTY COMPILE_DEFINITIONS GBAGAME_NETPLAY=1)
+endif()
 
 # Keep recomp-ui and its Dear ImGui sources isolated from the generated guest
 # shards. Only this small bridge and main.cpp know that the launcher exists.
@@ -83,6 +90,9 @@ if(GBAGAME_RECOMP_UI)
     recomp_target_launcher_ui(game_launcher_ui
         CONSOLE gba
         BOXART ${CMAKE_CURRENT_SOURCE_DIR}/recomp/launcher/boxart.tga)
+    if(GBARECOMP_NETPLAY)
+        gbarecomp_target_netplay_launcher(game_launcher_ui)
+    endif()
     find_package(SDL2 REQUIRED)
     target_link_libraries(game_launcher_ui PUBLIC SDL2::SDL2)
     if(WIN32)

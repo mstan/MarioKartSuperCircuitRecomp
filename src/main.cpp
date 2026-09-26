@@ -5,6 +5,10 @@
 
 #include "runtime.h"
 #include "mksc_extended_view.h"
+#if defined(GBAGAME_NETPLAY)
+#include "multiplayer_launch.h"
+#include "gba_netplay_build_identity.h"
+#endif
 
 #if defined(GBAGAME_RECOMP_UI)
 #include "game_launcher_boot.h"
@@ -20,6 +24,13 @@ int main(int argc, char** argv) {
         }
     }
     gbarecomp::RunOptions opts;
+    std::vector<std::string> args(argv, argv + argc);
+#if defined(GBAGAME_NETPLAY)
+    opts.netplay=gbarecomp::make_gba_netplay_launch("mksc-usa",GBARECOMP_NETPLAY_BUILD_ID,
+        "aadc8b9f3c947ff6f610b6c8d7fddaaa9bea98b4bd43576df84f26c457ae1f90");
+    try { gbarecomp::parse_gba_netplay_arguments(args,*opts.netplay); }
+    catch (const std::exception& e) { std::fprintf(stderr,"netplay: %s\n",e.what()); return 1; }
+#endif
     opts.builtin_game_name = "Mario Kart: Super Circuit (USA)";
     opts.builtin_rom_sha1 = "9d327c030c3e2d9007990518594f70c3340ac56f";
     opts.builtin_rom_crc32 = 0xED316E37u;
@@ -41,13 +52,10 @@ int main(int argc, char** argv) {
     opts.launcher_save_path = "saves/mario_kart_super_circuit_usa.sav";
 
 #if defined(GBAGAME_RECOMP_UI)
-    std::vector<std::string> args(argv, argv + argc);
     if (game_launcher_preboot(args, opts)) return 0;
+#endif
     std::vector<char*> av;
     av.reserve(args.size());
     for (auto& arg : args) av.push_back(arg.data());
     return gbarecomp::run_game(static_cast<int>(av.size()), av.data(), opts);
-#else
-    return gbarecomp::run_game(argc, argv, opts);
-#endif
 }
