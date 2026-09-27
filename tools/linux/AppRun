@@ -25,6 +25,7 @@ ln -sfn "$HERE/usr/bin/assets" "$DATA/assets"
 cp -Rn "$SHARE/mods/packages/." "$DATA/mods/packages/" 2>/dev/null || true
 cp -n "$SHARE/LICENSE" "$SHARE/README.md" "$DATA/" 2>/dev/null || true
 
+export RECOMP_HOST_LD_LIBRARY_PATH="${LD_LIBRARY_PATH-}"
 export LD_LIBRARY_PATH="$HERE/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 cd "$DATA"
 exec "$DATA/MarioKartSuperCircuitRecomp" "$@"

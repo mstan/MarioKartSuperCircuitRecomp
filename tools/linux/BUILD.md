@@ -7,7 +7,7 @@ game's native sources with `tools/regen.ps1` first. No ROM or BIOS is published.
 Run from Linux or WSL with Docker and rsync installed:
 
 ```sh
-bash tools/linux/make_appimage.sh --version 0.1.0 \
+bash tools/linux/make_appimage.sh --version 0.1.1 \
   --game "$PWD" --engine /path/to/pinned/gbarecomp \
   --ui /path/to/pinned/recomp-ui --out "$PWD/release-stage" --jobs 8 \
   --private /path/to/private-test-images
@@ -20,7 +20,7 @@ that test. The Ubuntu 22.04 builder bundles the pinned SDL fork and launcher
 dependencies, with a persistent build cache in
 `~/.cache/mariokartsupercircuitrecomp-release`.
 
-Windows packaging uses `tools/make_release.ps1 -Version 0.1.0` with optional
+Windows packaging uses `tools/make_release.ps1 -Version 0.1.1` with optional
 `-GbarecompRoot` and `-RecompUiRoot` paths. Use the same generated native sources
 for both platforms and compare their generated
 `MarioKartSuperCircuitRecomp-netplay/gba_netplay_build_identity.h` files before
