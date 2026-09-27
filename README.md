@@ -7,7 +7,7 @@
 > For more context, read
 > [Recomp + AI: 5 Months Later »](https://1379.tech/recomp-ai-5-months-later/).
 
-Static recompilation of **Mario Kart: Super Circuit** for Windows, with
+Static recompilation of **Mario Kart: Super Circuit** for Windows and Linux, with
 optional 60 FPS and Adaptive Widescreen mods.
 
 Special thanks to **antimattur** for the Mario Kart: Super Circuit
