@@ -46,6 +46,7 @@ cp -R /build/mksc/assets "$APPDIR/usr/bin/assets"
 # Checked-in catalog only (never a build dir's remembered selections).
 cp -R "$GAME/mods/preloaded/packages" "$APPDIR/usr/share/mariokartsupercircuitrecomp/mods/packages"
 cp "$GAME/LICENSE" "$APPDIR/usr/share/mariokartsupercircuitrecomp/LICENSE"
+python3 "$GAME/tools/collect_licenses.py" "$ENGINE" "$UI" "$APPDIR/usr/share/mariokartsupercircuitrecomp/licenses"
 cp "$GAME/tools/linux/README.md" "$APPDIR/usr/share/mariokartsupercircuitrecomp/README.md"
 cat "$GAME/docs/NETPLAY.md" >> "$APPDIR/usr/share/mariokartsupercircuitrecomp/README.md"
 sed -i "s/@VERSION@/${VERSION}/g" "$APPDIR/usr/share/mariokartsupercircuitrecomp/README.md"

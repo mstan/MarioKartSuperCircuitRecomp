@@ -125,6 +125,17 @@ if (-not (Test-Path -LiteralPath (Join-Path $mods 'packages'))) {
 }
 Copy-Item -LiteralPath $mods -Destination (Join-Path $stage 'mods') -Recurse
 Copy-Item -LiteralPath (Join-Path $root 'LICENSE') -Destination $stage
+& (Get-Command python.exe).Source (Join-Path $root 'tools\collect_licenses.py') `
+    $engine $ui (Join-Path $stage 'licenses') --mingw (Split-Path $mingwBin)
+if ($LASTEXITCODE -ne 0) { throw 'Dependency notice staging failed.' }
+
+foreach ($entry in @(@((Join-Path $engine 'tools\_toolchain_cache\tcc_extract'), $engine),
+                    @((Join-Path $stage 'overlay_toolchain\tcc'), $stage))) {
+    if (-not [IO.Path]::GetFullPath($entry[0]).StartsWith(
+            [IO.Path]::GetFullPath($entry[1]).TrimEnd('\') + '\', [StringComparison]::OrdinalIgnoreCase)) {
+        throw "Refusing toolchain staging outside $($entry[1])"
+    }
+}
 
 & (Join-Path $engine 'tools\fetch_tcc.ps1') `
     -Toolchain (Join-Path $stage 'overlay_toolchain') -EngineRoot $engine
