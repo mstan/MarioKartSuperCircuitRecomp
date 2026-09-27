@@ -1,0 +1,30 @@
+#!/bin/sh
+# MarioKartSuperCircuitRecomp AppImage entry point.
+#
+# The runtime keeps its state next to its executable (config.ini, keybinds.ini,
+# rom.cfg / bios.cfg, saves, mod selections) - the Windows zip is a portable
+# folder. An AppImage is mounted read-only, so this launcher gives it a
+# writable per-user home and runs the game from there:
+#
+#   ${MARIOKARTSUPERCIRCUITRECOMP_HOME:-${XDG_DATA_HOME:-~/.local/share}/MarioKartSuperCircuitRecomp}
+#
+# The (read-only) executable and launcher assets are linked in on every start
+# (the AppImage mount point changes per run); the mod catalog is copied once
+# per package version so the player's mod choices stay writable. Your ROM and
+# BIOS are never bundled: the launcher asks for them on first run.
+set -eu
+HERE="$(dirname "$(readlink -f "$0")")"
+DATA="${MARIOKARTSUPERCIRCUITRECOMP_HOME:-${XDG_DATA_HOME:-$HOME/.local/share}/MarioKartSuperCircuitRecomp}"
+SHARE="$HERE/usr/share/mariokartsupercircuitrecomp"
+
+mkdir -p "$DATA/mods/packages"
+ln -sfn "$HERE/usr/bin/MarioKartSuperCircuitRecomp" "$DATA/MarioKartSuperCircuitRecomp"
+ln -sfn "$HERE/usr/bin/assets" "$DATA/assets"
+# New package versions arrive as new <id>/<version> directories; never
+# overwrite anything already in the player's catalog.
+cp -Rn "$SHARE/mods/packages/." "$DATA/mods/packages/" 2>/dev/null || true
+cp -n "$SHARE/LICENSE" "$SHARE/README.md" "$DATA/" 2>/dev/null || true
+
+export LD_LIBRARY_PATH="$HERE/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+cd "$DATA"
+exec "$DATA/MarioKartSuperCircuitRecomp" "$@"

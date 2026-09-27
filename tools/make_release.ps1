@@ -13,6 +13,7 @@ param(
     [Parameter(Mandatory = $true)][string]$Version,
     [string]$BuildDir = 'build-release',
     [string]$GbarecompRoot = '',
+    [string]$RecompUiRoot = '',
     [ValidateRange(1, 32)][int]$Jobs = 4
 )
 
@@ -27,6 +28,16 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $root = (Resolve-Path (Join-Path $scriptDir '..')).Path
 if (-not $GbarecompRoot) { $GbarecompRoot = Join-Path $root 'gbarecomp' }
 $engine = (Resolve-Path $GbarecompRoot).Path
+if (-not $RecompUiRoot) { $RecompUiRoot = Join-Path $root 'recomp-ui' }
+$ui = (Resolve-Path -LiteralPath $RecompUiRoot).Path
+foreach ($entry in @(@('gbarecomp', $engine), @('recomp-ui', $ui))) {
+    $pin = ((git -C $root ls-tree HEAD $entry[0]) -split '\s+')[2]
+    $head = (git -C $entry[1] rev-parse HEAD).Trim()
+    if ($head -ne $pin) { throw "$($entry[0]) must match pinned commit $pin" }
+    if (git -C $entry[1] status --porcelain --untracked-files=no) {
+        throw "$($entry[0]) has uncommitted tracked changes"
+    }
+}
 $build = Join-Path $root $BuildDir
 $out = Join-Path $root 'release-stage'
 $target = 'MarioKartSuperCircuitRecomp'
@@ -61,20 +72,23 @@ if ($generated.Count -eq 0) {
 $env:PATH = "$mingwBin;$env:PATH"
 New-Item -ItemType Directory -Force -Path $out | Out-Null
 
-& cmake -S $root -B $build -G Ninja `
+& "$mingwBin\cmake.exe" -S $root -B $build -G Ninja `
     -DCMAKE_C_COMPILER="$mingwBin/cc.exe" `
     -DCMAKE_CXX_COMPILER="$mingwBin/c++.exe" `
     -DCMAKE_MAKE_PROGRAM="$mingwBin/ninja.exe" `
     -DCMAKE_BUILD_TYPE=Release `
-    "-DCMAKE_CXX_FLAGS_RELEASE=-O1 -DNDEBUG" `
+    "-DCMAKE_CXX_FLAGS_RELEASE=-O3 -DNDEBUG" `
     -DGBARECOMP_ROOT="$engine" `
+    -DRECOMP_UI_ROOT="$ui" `
+    -DGBARECOMP_RUNTIME_UI_ROOT="$ui" `
+    -DGBARECOMP_NETPLAY=ON `
     -DGBARECOMP_BUILD_ORACLE=OFF `
     -DGBARECOMP_MINGW_PREFIX_UNIX='/c/msys64/mingw64' `
     -DSDL2_INCLUDE_DIR='C:/msys64/mingw64/include/SDL2' `
     -DSDL2_LIBRARY='C:/msys64/mingw64/lib/libSDL2.dll.a'
 if ($LASTEXITCODE -ne 0) { throw "Release configure failed ($LASTEXITCODE)." }
 
-& cmake --build $build --target $target --parallel $Jobs
+& "$mingwBin\cmake.exe" --build $build --target $target --parallel $Jobs
 if ($LASTEXITCODE -ne 0) { throw "Release build failed ($LASTEXITCODE)." }
 
 $exe = Join-Path $build "$target.exe"
@@ -105,11 +119,23 @@ if (-not (Test-Path -LiteralPath $stagedBoxart)) {
 }
 Copy-Item -LiteralPath $assets -Destination $stage -Recurse
 
-$mods = Join-Path $build 'mods'
+$mods = Join-Path $root 'mods\preloaded'
 if (-not (Test-Path -LiteralPath (Join-Path $mods 'packages'))) {
     throw "Preloaded mod catalog is missing: $mods"
 }
-Copy-Item -LiteralPath $mods -Destination $stage -Recurse
+Copy-Item -LiteralPath $mods -Destination (Join-Path $stage 'mods') -Recurse
+Copy-Item -LiteralPath (Join-Path $root 'LICENSE') -Destination $stage
+& (Get-Command python.exe).Source (Join-Path $root 'tools\collect_licenses.py') `
+    $engine $ui (Join-Path $stage 'licenses') --mingw (Split-Path $mingwBin)
+if ($LASTEXITCODE -ne 0) { throw 'Dependency notice staging failed.' }
+
+foreach ($entry in @(@((Join-Path $engine 'tools\_toolchain_cache\tcc_extract'), $engine),
+                    @((Join-Path $stage 'overlay_toolchain\tcc'), $stage))) {
+    if (-not [IO.Path]::GetFullPath($entry[0]).StartsWith(
+            [IO.Path]::GetFullPath($entry[1]).TrimEnd('\') + '\', [StringComparison]::OrdinalIgnoreCase)) {
+        throw "Refusing toolchain staging outside $($entry[1])"
+    }
+}
 
 & (Join-Path $engine 'tools\fetch_tcc.ps1') `
     -Toolchain (Join-Path $stage 'overlay_toolchain') -EngineRoot $engine
@@ -147,7 +173,7 @@ It has no affiliation with or endorsement from Nintendo.
 5. Open Mods to opt into Adaptive Widescreen or 60 FPS, then select PLAY.
 
 Display, audio, input, and enhancement settings persist locally. Keyboard
-defaults: arrows = D-pad, Z = A, X = B, A = L, S = R, Enter = Start,
+defaults: arrows = D-pad, X = A, Z = B, C = L, V = R, Enter = Start,
 Right Shift = Select, and Tab = fast-forward. Shift+F1-F9 saves a state;
 F1-F9 loads one.
 
@@ -158,6 +184,8 @@ Interactive play has no implicit runtime step limit; only an explicit
 Project: https://github.com/mstan/MarioKartSuperCircuitRecomp
 Engine: https://github.com/mstan/gbarecomp
 "@ | Out-File -LiteralPath (Join-Path $stage 'README.md') -Encoding utf8
+
+Get-Content -LiteralPath (Join-Path $root 'docs\NETPLAY.md') | Add-Content -LiteralPath (Join-Path $stage 'README.md') -Encoding utf8
 
 $forbidden = Get-ChildItem -LiteralPath $stage -Recurse -File | Where-Object {
     $_.Extension -in @('.gba', '.sav', '.srm') -or
@@ -204,7 +232,7 @@ try {
             throw "Refusing to archive a file outside the release stage: $rzFull"
         }
         $rzName = $rzFull.Substring($rzPrefix.Length).Replace('\', '/')
-        if ($rzName.StartsWith('/') -or $rzName -match '(^|/)..(/|$)') {
+        if ($rzName.StartsWith('/') -or $rzName -match '(^|/)\.\.(/|$)') {
             throw "Unsafe ZIP entry name: $rzName"
         }
         [IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
@@ -222,7 +250,7 @@ try {
     $rzBad = @($rzArchive.Entries | Where-Object {
         $_.FullName.Contains('\') -or
         $_.FullName.StartsWith('/') -or
-        $_.FullName -match '(^|/)..(/|$)'
+        $_.FullName -match '(^|/)\.\.(/|$)'
     })
     if ($rzBad.Count -ne 0) {
         throw "ZIP contains non-portable entry names: $(

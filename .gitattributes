@@ -1,0 +1,5 @@
+# Linux release tooling runs inside a container: keep LF.
+tools/linux/*.sh text eol=lf
+tools/linux/AppRun text eol=lf
+tools/linux/Dockerfile text eol=lf
+tools/linux/*.desktop text eol=lf
