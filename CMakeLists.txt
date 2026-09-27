@@ -4,6 +4,12 @@ project(MarioKartSuperCircuitRecomp C CXX)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+if(ANDROID)
+    set(_netplay_default OFF)
+else()
+    set(_netplay_default ON)
+endif()
+option(GBARECOMP_NETPLAY "Build desktop link-cable netplay" ${_netplay_default})
 
 set(GBARECOMP_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/gbarecomp"
     CACHE PATH "Path to this game's gbarecomp worktree")
@@ -101,6 +107,10 @@ if(GBAGAME_RECOMP_UI)
     target_link_libraries(MarioKartSuperCircuitRecomp PRIVATE game_launcher_ui)
     set_property(SOURCE src/main.cpp APPEND PROPERTY
         COMPILE_DEFINITIONS GBAGAME_RECOMP_UI)
+endif()
+
+if(GBARECOMP_NETPLAY AND NOT ANDROID)
+    gbarecomp_target_netplay_view_probe(MarioKartSuperCircuitRecomp tests/netplay_view_probe.cpp)
 endif()
 
 # Ship the game-owned, disabled-by-default enhancement packages beside the

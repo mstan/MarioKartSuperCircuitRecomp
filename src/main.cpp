@@ -28,6 +28,8 @@ int main(int argc, char** argv) {
 #if defined(GBAGAME_NETPLAY)
     opts.netplay=gbarecomp::make_gba_netplay_launch("mksc-usa",GBARECOMP_NETPLAY_BUILD_ID,
         "aadc8b9f3c947ff6f610b6c8d7fddaaa9bea98b4bd43576df84f26c457ae1f90");
+    opts.netplay->view_policy = {true, true, mksc::install_extended_view,
+        nullptr, mksc::reset_extended_view};
     try { gbarecomp::parse_gba_netplay_arguments(args,*opts.netplay); }
     catch (const std::exception& e) { std::fprintf(stderr,"netplay: %s\n",e.what()); return 1; }
 #endif
