@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=MarioKartSuperCircuitRecomp
+GenericName=Pokémon Emerald (native port)
+Comment=Static recompilation of Pokémon Emerald. Supply your own ROM and GBA BIOS.
+Exec=MarioKartSuperCircuitRecomp
+Icon=mariokartsupercircuitrecomp
+Terminal=false
+Categories=Game;
