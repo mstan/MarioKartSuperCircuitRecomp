@@ -619,3 +619,13 @@ addr = 0x0805B520
 mode = "thumb"
 name = "race_sequence_remove_0805b520"
 note = "Reviewed helper entry; covers profiled internal blocks 0x0805B532 and 0x0805B54C"
+
+# The serial descriptor at 0x080DE17C stores 0x0802DB5D at offset 0x38.
+# The timer/serial callback dispatcher at 0x0802E612 calls it indirectly.
+# This routine follows the return and literal pool ending at 0x0802DB5B;
+# the imported decomp map leaves its bytes unnamed.
+[[extra_func]]
+addr = 0x0802DB5C
+mode = "thumb"
+name = "multilink_serial_callback"
+note = "Reviewed serial descriptor callback at 0x080DE1B4; reached by paired native cable setup"

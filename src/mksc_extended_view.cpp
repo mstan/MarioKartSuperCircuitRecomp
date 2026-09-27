@@ -20,6 +20,9 @@ int (*g_previous_bg_x_provider)(int, int, int, int*) = nullptr;
 int (*g_previous_obj_attr_x_provider)(int, std::uint16_t, std::uint16_t,
                                       std::uint16_t, int*) = nullptr;
 int (*g_previous_affine_filter_provider)(int, int) = nullptr;
+const gba::GbaBus* cached_bus = nullptr;
+unsigned long long cached_vblank = ~0ull;
+bool cached_race = false;
 
 struct HudRect {
     int x0;
@@ -129,9 +132,6 @@ bool race_layout(const gba::GbaBus* bus) {
     // The providers below are hot (the BG remapper runs per output pixel).
     // Scene identity cannot change inside one emulated frame, so inspect the
     // game-owned tilemap only once per VBlank rather than six times per pixel.
-    static const gba::GbaBus* cached_bus = nullptr;
-    static unsigned long long cached_vblank = ~0ull;
-    static bool cached_race = false;
     if (cached_bus != bus || cached_vblank != g_runtime_vblank_starts) {
         cached_bus = bus;
         cached_vblank = g_runtime_vblank_starts;
@@ -297,8 +297,10 @@ int race_affine_filter_provider(int bg, int screen_y) {
 }  // namespace
 
 void install_extended_view(std::uint32_t, std::uint32_t) {
-    g_previous_tilemap_provider = gba::g_ws_tilemap_provider;
-    gba::g_ws_tilemap_provider = race_tilemap_provider;
+    if (gba::g_ws_tilemap_provider != race_tilemap_provider) {
+        g_previous_tilemap_provider = gba::g_ws_tilemap_provider;
+        gba::g_ws_tilemap_provider = race_tilemap_provider;
+    }
     if (gba::g_ws_bg_x_provider != race_hud_bg_x_provider) {
         g_previous_bg_x_provider = gba::g_ws_bg_x_provider;
         gba::g_ws_bg_x_provider = race_hud_bg_x_provider;
@@ -318,6 +320,12 @@ void install_extended_view(std::uint32_t, std::uint32_t) {
     gba::g_ws_pillarbox = 1;
     gba::g_ws_pillarbox_left = 0;
     gba::g_ws_pillarbox_right = 0;
+}
+
+void reset_extended_view() {
+    cached_bus = nullptr;
+    cached_vblank = ~0ull;
+    cached_race = false;
 }
 
 }  // namespace mksc
