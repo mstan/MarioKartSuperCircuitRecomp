@@ -19,14 +19,20 @@ own legally obtained dumps.
 
 ## Status
 
-The game boots and runs through menus, cup selection, races, and results. The
-initial `v0.0.1` build is a public preview; back up important saves and expect
-gameplay or presentation edge cases that have not been discovered yet.
+The current release is `v0.1.2` for Windows x64 and Linux x86_64. The game
+boots and runs through menus, cup selection, races, and results, and two
+players can link over the Internet or LAN with emulated link-cable netplay
+(see [`docs/NETPLAY.md`](docs/NETPLAY.md)). `v0.1.2` fixes netplay sessions
+closing on both players shortly after connecting.
+
+This is still an experimental preview; back up important saves and please
+report repeatable gameplay or presentation edge cases.
 
 ## Quick start
 
-1. Download the Windows zip from [Releases](../../releases) and extract it.
-2. Run `MarioKartSuperCircuitRecomp.exe`.
+1. Download the Windows zip or Linux AppImage from [Releases](../../releases).
+2. Extract the zip and run `MarioKartSuperCircuitRecomp.exe`, or mark the
+   AppImage executable and run it.
 3. In the launcher, select your **Mario Kart: Super Circuit (USA)** ROM and
    retail GBA BIOS.
 4. Configure display, audio, controls, and mods, then select **Play**.
@@ -50,10 +56,11 @@ course, mode, and character used.
 
 ## Features
 
-- Native Windows x64 application
+- Native Windows x64 application and Linux x86_64 AppImage
 - ROM and BIOS setup through the shared
   [recomp-ui](https://github.com/mstan/recomp-ui) launcher
 - Optional 60 FPS and Adaptive Widescreen mods
+- Two-player link-cable netplay with rollback or input delay
 - Keyboard and modern game-controller support
 - Windowed and fullscreen play with sharp scaling and optional affine
   filtering
@@ -96,8 +103,9 @@ code, copyrighted inputs, saves, and build output remain local and are never
 included in releases.
 
 Contributors can run `pwsh tools/test-attract-gameplay.ps1` for the automated
-native acceptance routes and `pwsh tools/make_release.ps1 -Version 0.0.1` to
-build a sanitized Windows package.
+native acceptance routes and `pwsh tools/make_release.ps1 -Version 0.1.2` to
+build a sanitized Windows package. The Linux AppImage build is documented in
+[`tools/linux/BUILD.md`](tools/linux/BUILD.md).
 
 ### Decomp symbol names (optional)
 
