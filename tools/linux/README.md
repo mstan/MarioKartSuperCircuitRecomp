@@ -1,4 +1,4 @@
-# Pokémon Emerald - GBA static recompilation (Linux x86_64 AppImage) v@VERSION@
+# Mario Kart: Super Circuit - GBA static recompilation (Linux x86_64 AppImage) v@VERSION@
 
 An optimized native port: the game's ARM7TDMI code is statically recompiled to
 native code with the [gbarecomp](https://github.com/mstan/gbarecomp) framework;
@@ -8,7 +8,7 @@ the real GBA BIOS is recompiled and executed.
 
 The game ROM and GBA BIOS are not included. On first run the launcher asks for:
 
-- your legally-obtained **Pokémon Emerald (USA)** ROM (`.gba`), SHA-1
+- your legally-obtained **Mario Kart: Super Circuit (USA)** ROM (`.gba`), SHA-1
   `9d327c030c3e2d9007990518594f70c3340ac56f`
 - a **GBA BIOS** dump (`gba_bios.bin`, 16 KiB).
 

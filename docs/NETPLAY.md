@@ -1,4 +1,4 @@
-## Link-cable netplay (new in v0.1.0)
+## Link-cable netplay
 
 Open the launcher's Netplay tab to host or join a two-player session. Both
 players need this release, the same USA game ROM and their own GBA BIOS.
@@ -6,8 +6,12 @@ Choose your save file before starting. Use the game's multi-cart link-cable
 menus after connecting.
 
 Both input-delay and rollback modes are available. This emulates a local
-link cable over recomp-net Internet/LAN sessions; Wireless Adapter, Single-Pak
-multiboot and cross-version Pokemon linking are not supported yet.
+link cable over recomp-net Internet/LAN sessions; Wireless Adapter and
+Single-Pak multiboot are not supported yet.
+
+v0.1.2 fixes paired sessions closing on both players about 20 seconds after
+connecting (v0.1.0 and v0.1.1). Both players must update together: sessions
+only pair between identical builds.
 
 The Netplay **Your display** setting offers native, 16:9, 21:9, 32:9 and adaptive widescreen.
 Each player can choose a different view or window size. These views preserve
