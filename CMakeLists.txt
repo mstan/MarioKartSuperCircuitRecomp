@@ -29,6 +29,16 @@ if(NOT EXISTS "${GBARECOMP_ROOT}/CMakeLists.txt")
 endif()
 
 add_subdirectory("${GBARECOMP_ROOT}" gbarecomp_build EXCLUDE_FROM_ALL)
+enable_testing()
+add_executable(mksc_extended_view_tests
+    tests/extended_view_tests.cpp
+    "${GBARECOMP_ROOT}/tools/bios_smoke/dispatch_stub.cpp"
+    src/mksc_extended_view.cpp)
+target_include_directories(mksc_extended_view_tests PRIVATE
+    src "${GBARECOMP_ROOT}/src/runtime")
+target_link_gbarecomp_runtime_stack(mksc_extended_view_tests)
+add_test(NAME mksc_extended_view COMMAND mksc_extended_view_tests)
+
 set(GBA_GAME_GENERATED_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/generated" CACHE PATH
     "Generated native corpus (may point at an independent qualification build)")
 if(EXISTS "${GBA_GAME_GENERATED_ROOT}/recompiled.cpp")
