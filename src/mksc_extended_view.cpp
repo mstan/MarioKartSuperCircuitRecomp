@@ -31,13 +31,16 @@ struct HudRect {
     int y1;
 };
 
-// BG0 is a transparent race-HUD plane. These are the five authored groups
+// BG0 is a transparent race-HUD plane. These are the authored groups
 // visible in native 240x160 space. Deliberately exclude the center item box,
 // countdown, and pause dialog so they remain centered.
 constexpr HudRect kLeftHud[] = {
     {0, 0, 100, 28},    // coins + lap
     {0, 28, 32, 128},   // running order, including animated portrait spill
     {0, 120, 64, 160},  // current position
+    // sub_804EDAC copies the 6x5 speedometer map at 0x080EE76C to
+    // tile (0,14). Its upper-right rim is above the position rectangle.
+    {0, 112, 48, 152},  // Time Trial speedometer rim
 };
 constexpr HudRect kRightHud[] = {
     {140, 0, 240, 28},   // timer + race indicators
@@ -264,6 +267,16 @@ int race_hud_obj_x_provider(int oam_index, std::uint16_t attr0,
     gba::GbaBus* bus = gbarecomp::active_bus();
     const int raw_x = static_cast<int>(attr1 & 0x01FFu);
     const int y = static_cast<int>(attr0 & 0x00FFu);
+    // sub_804F494 draws cell 0x080EE764 about (24,136): a 64x64 affine
+    // needle at (-8,104), tile 0x3C0, palette 7. Its OAM slot and matrix
+    // index depend on the preceding minimap markers; neither identifies it.
+    // Translate the sprite's signed origin, leaving its rotation untouched.
+    if (out_x && bus && g_ws_extra_left != 0 && race_layout(bus) &&
+        attr0 == 0x0168u && (attr1 & 0xC1FFu) == 0xC1F8u &&
+        attr2 == 0x73C0u) {
+        *out_x = -8 - static_cast<int>(g_ws_extra_left);
+        return 1;
+    }
     // Race OAM slots 0-7 are its eight 8x8 minimap markers. Attribute 2 is
     // rewritten during the frame and differs between parked OAM and the
     // scanline latch, so identify them by their stable slot/shape/map bounds.
