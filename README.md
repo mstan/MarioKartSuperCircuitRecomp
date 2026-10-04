@@ -19,11 +19,11 @@ own legally obtained dumps.
 
 ## Status
 
-The current release is `v0.1.2` for Windows x64 and Linux x86_64. The game
+The current release is `v0.1.3` for Windows x64 and Linux x86_64. The game
 boots and runs through menus, cup selection, races, and results, and two
 players can link over the Internet or LAN with emulated link-cable netplay
-(see [`docs/NETPLAY.md`](docs/NETPLAY.md)). `v0.1.2` fixes netplay sessions
-closing on both players shortly after connecting.
+(see [`docs/NETPLAY.md`](docs/NETPLAY.md)). `v0.1.3` fixes cartridge saving,
+including Time Trial ghosts, by reporting the correct 64 KB flash chip identity.
 
 This is still an experimental preview; back up important saves and please
 report repeatable gameplay or presentation edge cases.
@@ -103,7 +103,7 @@ code, copyrighted inputs, saves, and build output remain local and are never
 included in releases.
 
 Contributors can run `pwsh tools/test-attract-gameplay.ps1` for the automated
-native acceptance routes and `pwsh tools/make_release.ps1 -Version 0.1.2` to
+native acceptance routes and `pwsh tools/make_release.ps1 -Version 0.1.3` to
 build a sanitized Windows package. The Linux AppImage build is documented in
 [`tools/linux/BUILD.md`](tools/linux/BUILD.md).
 
