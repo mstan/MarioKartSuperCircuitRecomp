@@ -9,8 +9,9 @@ Both input-delay and rollback modes are available. This emulates a local
 link cable over recomp-net Internet/LAN sessions; Wireless Adapter and
 Single-Pak multiboot are not supported yet.
 
-v0.1.2 fixes paired sessions closing on both players about 20 seconds after
-connecting (v0.1.0 and v0.1.1). Both players must update together: sessions
+v0.1.4 fixes a delay-sync timeout when saving a paired session or finishing
+a checkpoint after resuming. Both players now reach the agreed frame before
+the checkpoint transfer starts. Both players must update together: sessions
 only pair between identical builds.
 
 The Netplay **Your display** setting offers native, 16:9, 21:9, 32:9 and adaptive widescreen.

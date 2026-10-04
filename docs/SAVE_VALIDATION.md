@@ -1,5 +1,9 @@
 # v0.1.3 saving validation
 
+The checkpoint timeout recorded below was subsequently reproduced without a
+ROM or WSL and fixed by the arrival barrier in PR #8, included in v0.1.4.
+The fixed Windows/Linux pair passed both checkpoint creation and resume.
+
 The engine fix is gbarecomp `6b9667b`: flash512 now identifies as Macronix
 MX29L512 (`C2 1C`); flash1m retains `C2 09`. The game's byte-checked RAM hook
 handles the SDK's flash helpers at varying stack addresses. Reviewed result
