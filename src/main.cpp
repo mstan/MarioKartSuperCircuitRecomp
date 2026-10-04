@@ -5,6 +5,7 @@
 
 #include "runtime.h"
 #include "mksc_extended_view.h"
+#include "mksc_flash_dispatch.h"
 #if defined(GBAGAME_NETPLAY)
 #include "multiplayer_launch.h"
 #include "gba_netplay_build_identity.h"
@@ -23,6 +24,7 @@ int main(int argc, char** argv) {
             return 0;
         }
     }
+    g_runtime_ram_dispatch_hook = &mksc::flash_stack_dispatch;
     gbarecomp::RunOptions opts;
     std::vector<std::string> args(argv, argv + argc);
 #if defined(GBAGAME_NETPLAY)

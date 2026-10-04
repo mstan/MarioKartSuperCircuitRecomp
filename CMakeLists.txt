@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(MarioKartSuperCircuitRecomp VERSION 0.1.2 LANGUAGES C CXX)
+project(MarioKartSuperCircuitRecomp VERSION 0.1.3 LANGUAGES C CXX)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 20)
@@ -128,4 +128,11 @@ if(MSVC)
     target_link_options(MarioKartSuperCircuitRecomp PRIVATE /STACK:16777216)
 elseif(MINGW OR WIN32)
     target_link_options(MarioKartSuperCircuitRecomp PRIVATE -Wl,--stack,16777216)
+endif()
+
+if(NOT ANDROID)
+    enable_testing()
+    add_executable(mksc_flash_dispatch_test EXCLUDE_FROM_ALL tests/flash_dispatch_test.cpp)
+    target_include_directories(mksc_flash_dispatch_test PRIVATE "${GBARECOMP_ROOT}/src/armv4t")
+    add_test(NAME mksc_flash_dispatch_test COMMAND mksc_flash_dispatch_test)
 endif()
