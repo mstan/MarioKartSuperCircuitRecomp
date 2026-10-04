@@ -629,3 +629,53 @@ addr = 0x0802DB5C
 mode = "thumb"
 name = "multilink_serial_callback"
 note = "Reviewed serial descriptor callback at 0x080DE1B4; reached by paired native cable setup"
+
+# Reviewed Thumb callback entries reached by the Time Trial finish/results flow.
+
+[[extra_func]]
+addr = 0x0803DDCC
+mode = "thumb"
+name = "time_trial_result_0803ddcc"
+note = "Confirmed function boundary and live indirect-dispatch target after finishing Time Trial"
+
+[[extra_func]]
+addr = 0x0803DDD8
+mode = "thumb"
+name = "time_trial_result_0803ddd8"
+note = "Confirmed function boundary and live indirect-dispatch target after finishing Time Trial"
+
+[[extra_func]]
+addr = 0x0805045C
+mode = "thumb"
+name = "time_trial_result_0805045c"
+note = "Confirmed function boundary and live indirect-dispatch target after finishing Time Trial"
+
+[[extra_func]]
+addr = 0x08050688
+mode = "thumb"
+name = "time_trial_result_08050688"
+note = "Confirmed function boundary and live indirect-dispatch target after finishing Time Trial"
+
+[[extra_func]]
+addr = 0x080506F0
+mode = "thumb"
+name = "time_trial_result_080506f0"
+note = "Confirmed function boundary and live indirect-dispatch target after finishing Time Trial"
+
+[[extra_func]]
+addr = 0x08050754
+mode = "thumb"
+name = "time_trial_result_08050754"
+note = "Confirmed function boundary and live indirect-dispatch target after finishing Time Trial"
+
+[[extra_func]]
+addr = 0x08050C44
+mode = "thumb"
+name = "time_trial_result_08050c44"
+note = "Confirmed function boundary and live indirect-dispatch target after finishing Time Trial"
+
+[[extra_func]]
+addr = 0x08050DF8
+mode = "thumb"
+name = "time_trial_result_08050df8"
+note = "Confirmed function boundary and live indirect-dispatch target after finishing Time Trial"
