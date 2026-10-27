@@ -344,6 +344,9 @@ void install_extended_view(std::uint32_t, std::uint32_t) {
     if (gba::g_ws_bg_x_provider != race_hud_bg_x_provider) {
         g_previous_bg_x_provider = gba::g_ws_bg_x_provider;
         gba::g_ws_bg_x_provider = race_hud_bg_x_provider;
+        // Only BG0 is remapped here. Retain any chained provider's layers;
+        // the null-provider default mask does not describe real callbacks.
+        if (!g_previous_bg_x_provider) gba::g_ws_bg_x_provider_layers = 0;
     }
     gba::g_ws_bg_x_provider_layers |= 1u << 0;
     if (gba::g_ws_obj_attr_x_provider != race_hud_obj_x_provider) {
