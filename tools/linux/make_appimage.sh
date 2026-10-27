@@ -8,7 +8,7 @@
 # --private (optional) holds gba_bios.bin + mario_kart_super_circuit_usa.gba for the smoke
 # test; it is mounted read-only and never enters the image.
 set -euo pipefail
-VERSION="" GAME="" ENGINE="" UI="" OUT="" PRIVATE="" JOBS=4 ENGINE_REV=""
+VERSION="" GAME="" ENGINE="" UI="" OUT="" PRIVATE="" JOBS=4 ENGINE_REV="" GENERATED_BIOS=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --version) VERSION="$2"; shift 2 ;;
@@ -19,11 +19,16 @@ while [[ $# -gt 0 ]]; do
         --private) PRIVATE="$2"; shift 2 ;;
         --jobs) JOBS="$2"; shift 2 ;;
         --engine-rev) ENGINE_REV="$2"; shift 2 ;;
+        --generated-bios) GENERATED_BIOS="$2"; shift 2 ;;
         *) echo "unknown argument $1"; exit 2 ;;
     esac
 done
 for v in VERSION GAME ENGINE UI OUT; do
     [[ -n "${!v}" ]] || { echo "--${v,,} is required"; exit 2; }
+done
+[[ -n "$GENERATED_BIOS" ]] || GENERATED_BIOS="$ENGINE/src/runtime/generated_bios"
+for name in bios_recompiled.cpp bios_recompiled.h bios_dispatch_table.cpp bios_symbol_map.cpp; do
+    test -f "$GENERATED_BIOS/$name" || { echo "Missing audited generated BIOS input: $GENERATED_BIOS/$name"; exit 1; }
 done
 IMAGE=mariokartsupercircuitrecomp-linux-builder
 docker build -q -t "$IMAGE" "$GAME/tools/linux" >/dev/null
@@ -46,7 +51,8 @@ rsync -a --delete "${EXCLUDES[@]}" --exclude '/gbarecomp/' --exclude '/recomp-ui
 rsync -a --delete "${EXCLUDES[@]}" --exclude 'tools/gbaref/' --exclude 'tools/_toolchain_cache/' \
     --exclude '.local/' --exclude 'oracle/' "$ENGINE/" "$STAGE/engine/"
 rsync -a --delete "${EXCLUDES[@]}" "$UI/" "$STAGE/ui/"
-MOUNTS=(-v "$STAGE/game:/src/game:ro" -v "$STAGE/engine:/src/engine:ro" -v "$STAGE/ui:/src/ui:ro"
+rsync -a --delete "$GENERATED_BIOS/" "$STAGE/bios/"
+MOUNTS=(-v "$STAGE/bios:/src/bios:ro" -v "$STAGE/game:/src/game:ro" -v "$STAGE/engine:/src/engine:ro" -v "$STAGE/ui:/src/ui:ro"
         -v "$OUT:/out")
 if [[ -n "$PRIVATE" ]]; then
     # Smoke-test ROM/BIOS: a private copy on the Linux side, removed on exit.
