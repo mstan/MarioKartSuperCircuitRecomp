@@ -46,9 +46,9 @@ EXCLUDES=(--exclude '.git' --exclude 'build/' --exclude 'build-*/' --exclude 're
           --exclude 'recomp_cache/' --exclude '*.gba' --exclude '*.sav' --exclude '*.state*'
           --exclude 'gba_bios.bin' --exclude 'android/app/build/' --exclude 'android/build/'
           --exclude 'android/.gradle/' --exclude 'android/app/.cxx/')
-rsync -a --delete "${EXCLUDES[@]}" --exclude '/gbarecomp/' --exclude '/recomp-ui/' --exclude 'third_party/mksc/' --exclude 'docs/screenshots/' \
+rsync -a --copy-dirlinks --delete "${EXCLUDES[@]}" --exclude '/gbarecomp/' --exclude '/recomp-ui/' --exclude 'third_party/mksc/' --exclude 'docs/screenshots/' \
     "$GAME/" "$STAGE/game/"
-rsync -a --delete "${EXCLUDES[@]}" --exclude 'tools/gbaref/' --exclude 'tools/_toolchain_cache/' \
+rsync -a --copy-dirlinks --delete "${EXCLUDES[@]}" --exclude 'tools/gbaref/' --exclude 'tools/_toolchain_cache/' \
     --exclude '.local/' --exclude 'oracle/' "$ENGINE/" "$STAGE/engine/"
 rsync -a --delete "${EXCLUDES[@]}" "$UI/" "$STAGE/ui/"
 rsync -a --delete "$GENERATED_BIOS/" "$STAGE/bios/"
