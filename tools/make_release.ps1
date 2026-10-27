@@ -83,8 +83,8 @@ $env:PATH = "$mingwBin;$env:PATH"
 New-Item -ItemType Directory -Force -Path $out | Out-Null
 
 & "$mingwBin\cmake.exe" -S $root -B $build -G Ninja `
-    -DCMAKE_C_COMPILER="$mingwBin/cc.exe" `
-    -DCMAKE_CXX_COMPILER="$mingwBin/c++.exe" `
+    -DCMAKE_C_COMPILER="$mingwBin/gcc.exe" `
+    -DCMAKE_CXX_COMPILER="$mingwBin/g++.exe" `
     -DCMAKE_MAKE_PROGRAM="$mingwBin/ninja.exe" `
     -DCMAKE_BUILD_TYPE=Release `
     "-DCMAKE_CXX_FLAGS_RELEASE=-O3 -DNDEBUG" `
