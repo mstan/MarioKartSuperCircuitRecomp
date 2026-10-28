@@ -65,6 +65,39 @@ add_executable(MarioKartSuperCircuitRecomp
     src/mods/mksc_internal_resolution_plugin.cpp
     ${GAME_GENERATED_SOURCES})
 
+# Isolated qualification binding for the reviewed MKSC USA mono SDK driver.
+# The source implementation is portable; linkers without --wrap keep the
+# maintained LLE body. This is build selection, never a player-facing mod.
+option(MKSC_MP2K_PROBE "Capture original SoundMainRAM calls for service qualification" OFF)
+if(GBARECOMP_MP2K_IMPLEMENTATION STREQUAL "HLE" OR MKSC_MP2K_PROBE)
+    if(NOT MSVC AND NOT APPLE AND NOT EMSCRIPTEN)
+        # Byte-verified RAM templates take precedence over the fixed IWRAM
+        # dispatch entry. Bind the actual generated service body, and derive
+        # its symbol from the audited entry bytes rather than assuming a
+        # template index remains stable across regeneration.
+        file(STRINGS "${GBA_GAME_GENERATED_ROOT}/dispatch_table.cpp" _mp2k_entry
+            REGEX "^const uint8_t ram_bytes_[0-9]+\\[\\] = \\{67u,121u,0u,43u,34u,208u,1u,161u,8u,71u,\\};$")
+        list(LENGTH _mp2k_entry _mp2k_matches)
+        if(NOT _mp2k_matches EQUAL 1)
+            message(FATAL_ERROR "Expected one audited SoundMainRAM template entry")
+        endif()
+        string(REGEX REPLACE "^const uint8_t ram_bytes_([0-9]+).*" "\\1" _mp2k_index "${_mp2k_entry}")
+        target_sources(MarioKartSuperCircuitRecomp PRIVATE src/native_soundmain.cpp)
+        target_compile_definitions(MarioKartSuperCircuitRecomp PRIVATE
+            MKSC_SOUNDMAIN_SYMBOL=ram_aot_${_mp2k_index})
+        target_link_options(MarioKartSuperCircuitRecomp PRIVATE
+            -Wl,--wrap=ram_aot_${_mp2k_index})
+        if(GBARECOMP_MP2K_IMPLEMENTATION STREQUAL "HLE")
+            set_property(TARGET MarioKartSuperCircuitRecomp PROPERTY
+                GBARECOMP_NATIVE_SERVICES mksc-mp2k-mono-v1)
+            set_property(SOURCE src/native_soundmain.cpp APPEND PROPERTY
+                COMPILE_DEFINITIONS MKSC_MP2K_NATIVE=1)
+        endif()
+    else()
+        message(STATUS "Native MP2K pilot binding unavailable for this linker; retaining portable LLE")
+    endif()
+endif()
+
 # Keep every generated guest shard cheaper to compile than the runtime. The
 # dispatch table and symbol map remain ordinary small generated units.
 set(GAME_RECOMPILED_SOURCES ${GAME_GENERATED_SOURCES})
