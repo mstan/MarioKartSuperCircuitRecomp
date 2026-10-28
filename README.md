@@ -130,7 +130,7 @@ code, copyrighted inputs, saves, and build output remain local and are never
 included in releases.
 
 Contributors can run `pwsh tools/test-attract-gameplay.ps1` for the automated
-native acceptance routes and `pwsh tools/make_release.ps1 -Version 0.1.4` to
+native acceptance routes and `pwsh tools/make_release.ps1 -Version 0.1.10` to
 build a sanitized Windows package. The Linux AppImage build is documented in
 [`tools/linux/BUILD.md`](tools/linux/BUILD.md).
 
