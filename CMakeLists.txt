@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(MarioKartSuperCircuitRecomp VERSION 0.1.9 LANGUAGES C CXX)
+project(MarioKartSuperCircuitRecomp VERSION 0.1.10 LANGUAGES C CXX)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 20)
@@ -28,6 +28,9 @@ if(NOT EXISTS "${GBARECOMP_ROOT}/CMakeLists.txt")
         "Configure with -DGBARECOMP_ROOT=<path> if the local worktree link is absent.")
 endif()
 
+# Use resident GPU HD rendering where the host supports it. The renderer
+# retains its portable CPU fallback; resolution enhancements remain optional.
+option(GBARECOMP_GPU_HD_EXPERIMENT "Use supported resident GPU HD rendering" ON)
 add_subdirectory("${GBARECOMP_ROOT}" gbarecomp_build EXCLUDE_FROM_ALL)
 enable_testing()
 add_executable(mksc_extended_view_tests

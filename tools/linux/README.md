@@ -29,8 +29,9 @@ Requires FUSE 2 (`libfuse2`) like any AppImage; without it, run with
 ## Enhancement mods
 
 Open **Mods** to enable **Higher Internal Resolution** and select 2x, 3x, 4x,
-8x or 16x. 4x is the initial choice and recommended maximum. **8x (experimental)**
-and **16x (experimental)** may run very slowly; full speed is not guaranteed.
+8x, 16x, 32x or 64x. The mod starts at 4x. Scales above 4x are experimental;
+performance and available resolution depend on your GPU. Supported hosts use
+resident GPU rendering, with a portable CPU fallback.
 Sprites and HUD retain
 their original artwork. **60 FPS Track Rendering** is also optional.
 

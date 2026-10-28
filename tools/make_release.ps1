@@ -94,6 +94,11 @@ New-Item -ItemType Directory -Force -Path $out | Out-Null
     -DRECOMP_UI_ROOT="$ui" `
     -DGBARECOMP_RUNTIME_UI_ROOT="$ui" `
     -DGBARECOMP_NETPLAY=ON `
+    -DGBARECOMP_GPU_HD_EXPERIMENT=ON `
+    -DGBARECOMP_NATIVE_REGIONS=ON `
+    -DGBARECOMP_MP2K_IMPLEMENTATION=LLE `
+    -DMKSC_MP2K_PROBE=OFF `
+    -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF `
     -DGBARECOMP_SCANLINE_IMPLEMENTATION=HLE `
     -DGBARECOMP_HD_SAMPLER_IMPLEMENTATION=HLE `
     -DGBARECOMP_BUILD_ORACLE=OFF `
@@ -188,9 +193,10 @@ It has no affiliation with or endorsement from Nintendo.
 3. Select your legally obtained Mario Kart: Super Circuit (USA) ROM.
    Expected SHA-1: $expectedSha1
 4. Select your legally obtained retail gba_bios.bin under Settings > System.
-5. Open Mods to enable Higher Internal Resolution and choose 2x, 3x, 4x, 8x or 16x.
-   4x is the initial choice and recommended maximum. 8x and 16x are labeled
-   (experimental) and may run very slowly.
+5. Open Mods to enable Higher Internal Resolution and choose 2x, 3x, 4x, 8x,
+   16x, 32x or 64x. The mod starts at 4x. Higher scales are experimental;
+   performance and available resolution depend on your GPU. Supported hosts
+   use resident GPU rendering, with a portable CPU fallback.
 6. In Display, choose 16:9 or Adaptive to widen the single-player race view.
    Native (3:2) keeps side bars on a wide display. Default (Mods) retains the
    widescreen mod's choices; explicit Display choices take precedence.

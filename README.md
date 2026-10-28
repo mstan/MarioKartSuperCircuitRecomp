@@ -19,7 +19,7 @@ own legally obtained dumps.
 
 ## Status
 
-The current release is `v0.1.8` for Windows x64 and Linux x86_64. The game
+The current release is `v0.1.10` for Windows x64 and Linux x86_64. The game
 boots and runs through menus, cup selection, races, and results, and two
 players can link over the Internet or LAN with emulated link-cable netplay
 (see [`docs/NETPLAY.md`](docs/NETPLAY.md)). `v0.1.3` fixes cartridge saving,
@@ -42,6 +42,12 @@ run very slowly, even with the optimization.
 This is still an experimental preview; back up important saves and please
 report repeatable gameplay or presentation edge cases.
 
+`v0.1.10` adds resident GPU rendering for supported HD affine scenes and
+experimental 32x/64x internal-resolution choices. The game retains portable
+CPU rendering when the GPU path is unavailable or a scene is unsupported.
+Enhancements remain disabled by default; the resolution mod starts at 4x.
+Higher scales depend on GPU texture limits, memory and available performance.
+
 ## Quick start
 
 1. Download the Windows zip or Linux AppImage from [Releases](../../releases).
@@ -63,10 +69,11 @@ These enhancements are optional and disabled by default:
   discovered by **antimattur**.
 - **Adaptive Widescreen** renders additional race content at the sides instead
   of stretching the original 240×160 image.
-- **Higher Internal Resolution** samples the perspective track at 2x, 3x, 4x, 8x or 16x.
+- **Higher Internal Resolution** samples the perspective track at 2x, 3x, 4x, 8x, 16x, 32x or 64x.
   It works with Adaptive Widescreen; sprites and HUD keep their original artwork.
-  Up to 4x is recommended. **8x (experimental)** and **16x (experimental)**
-  may run very slowly: they render four and sixteen times the pixels of 4x.
+  The initial selection is 4x. Higher choices are experimental and depend
+  on your GPU's texture limits, memory and available performance. Supported
+  HD scenes use resident GPU rendering; a portable CPU fallback remains.
   The widescreen mod also offers **Fit to screen** and **16:9**;
   an explicit Display view choice takes precedence over this legacy mod.
 
