@@ -15,7 +15,7 @@ rom_sha1 = "9d327c030c3e2d9007990518594f70c3340ac56f"
 [[feature]]
 id = "internal-resolution"
 name = "Higher Internal Resolution"
-description = "Add detail to the perspective track. Works with Adaptive Widescreen; menus and original artwork retain their authored pixels. Up to 4x is recommended. 8x and 16x are experimental and may run very slowly."
+description = "Add detail to the perspective track. Works with Adaptive Widescreen; menus and original artwork retain their authored pixels. Up to 4x is recommended. Higher scales, including 32x and 64x, are experimental."
 group = "Graphics"
 default_enabled = false
 
@@ -45,6 +45,14 @@ label = "8x (experimental)"
 [[option.choice]]
 value = "16"
 label = "16x (experimental)"
+
+[[option.choice]]
+value = "32"
+label = "32x (experimental)"
+
+[[option.choice]]
+value = "64"
+label = "64x (experimental)"
 
 [[plugin]]
 feature = "internal-resolution"
