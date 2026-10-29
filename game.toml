@@ -686,6 +686,12 @@ note = "Confirmed function boundary and live indirect-dispatch target after fini
 # proximity. Original ROM references are retained in docs/COURSE-CALLBACKS.json.
 
 [[extra_func]]
+addr = 0x08050B64
+mode = "thumb"
+name = "course_callback_08050b64"
+note = "Standalone balloon-loss callback; script opcode43 references at080EF81C/080EF85C; paired Battle Course4 turn, beads-5ae.1.7"
+
+[[extra_func]]
 addr = 0x0804F9E4
 mode = "thumb"
 name = "course_callback_0804f9e4"

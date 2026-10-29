@@ -656,6 +656,19 @@
         "0x80f296c"
       ],
       "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x8050b64",
+      "first_instructions": [
+        "08050B64: adds r2, r0, #0",
+        "08050B66: ldr r1, [r2, #0x54]",
+        "08050B68: ldr r0, [r1, #8]"
+      ],
+      "rom_references": [
+        "0x80ef81c",
+        "0x80ef85c"
+      ],
+      "reason": "Standalone balloon-loss callback referenced by script opcode43; paired Battle Course4 steering reached it; ordinary BX LR exit at08050B86."
     }
   ]
 }
