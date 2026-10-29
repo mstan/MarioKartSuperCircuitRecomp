@@ -19,7 +19,7 @@ own legally obtained dumps.
 
 ## Status
 
-The current release is `v0.1.10` for Windows x64 and Linux x86_64. The game
+The current release is `v0.1.11` for Windows x64 and Linux x86_64. The game
 boots and runs through menus, cup selection, races, and results, and two
 players can link over the Internet or LAN with emulated link-cable netplay
 (see [`docs/NETPLAY.md`](docs/NETPLAY.md)). `v0.1.3` fixes cartridge saving,
@@ -38,6 +38,11 @@ The Netplay page's view choice applies separately to online play.
 `v0.1.8` adds the cached HLE track sampler for lower HD rendering cost. Up to
 4x is recommended; higher scales are labeled **(experimental)** and may still
 run very slowly, even with the optimization.
+
+`v0.1.11` fixes course-dependent 16:9 and Adaptive borders across all 40 race
+courses and four battle arenas, aligns the battle HUD balloons, and includes
+missing native course-actor and balloon-loss callbacks. The
+[course audit](docs/COURSE-WIDESCREEN-2026-10-28.md) records its validation scope.
 
 This is still an experimental preview; back up important saves and please
 report repeatable gameplay or presentation edge cases.
