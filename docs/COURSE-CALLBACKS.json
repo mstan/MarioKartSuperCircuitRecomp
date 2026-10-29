@@ -1,0 +1,661 @@
+{
+  "rom_sha1": "9d327c030c3e2d9007990518594f70c3340ac56f",
+  "baseline_title": "8d05c71db6ca1d97a261081324e6471411cfc184",
+  "baseline_engine": "a385e0b6d3f6c6a95c4ee6aeb873c158cee7300e",
+  "reviewed_callbacks": [
+    {
+      "address": "0x804f9e4",
+      "first_instructions": [
+        "0804F9E4: push {lr}",
+        "0804F9E6: adds r2, r0, #0",
+        "0804F9E8: ldr r3, [r2, #0x54]",
+        "0804F9EA: movs r1, #0x22",
+        "0804F9EC: ldrsh r0, [r2, r1]",
+        "0804F9EE: adds r0, #2"
+      ],
+      "rom_references": [
+        "0x80ef924",
+        "0x80ef93c",
+        "0x80ef974",
+        "0x80ef98c"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x8050c68",
+      "first_instructions": [
+        "08050C68: adds r2, r0, #0",
+        "08050C6A: movs r0, #0x22",
+        "08050C6C: ldrsh r1, [r2, r0]",
+        "08050C6E: ldr r0, [r2, #0x70]",
+        "08050C70: asrs r0, r0, #0x10",
+        "08050C72: subs r1, r1, r0"
+      ],
+      "rom_references": [
+        "0x80ef87c"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x8050cb8",
+      "first_instructions": [
+        "08050CB8: adds r3, r0, #0",
+        "08050CBA: adds r0, #0x64",
+        "08050CBC: ldrb r1, [r0]",
+        "08050CBE: movs r0, #2",
+        "08050CC0: ands r0, r1",
+        "08050CC2: cmp r0, #0"
+      ],
+      "rom_references": [
+        "0x80ef8b4",
+        "0x80ef8ec"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x8050d0c",
+      "first_instructions": [
+        "08050D0C: adds r3, r0, #0",
+        "08050D0E: adds r0, #0x64",
+        "08050D10: ldrb r1, [r0]",
+        "08050D12: movs r0, #2",
+        "08050D14: ands r0, r1",
+        "08050D16: cmp r0, #0"
+      ],
+      "rom_references": [
+        "0x8050d08"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a020",
+      "first_instructions": [
+        "0805A020: push {r4, lr}",
+        "0805A022: ldr r0, [r0, #0x68]",
+        "0805A024: cmp r0, #9",
+        "0805A026: bgt #0x805a034",
+        "0805A028: lsls r1, r0, #5",
+        "0805A02A: ldr r0, [pc, #4]"
+      ],
+      "rom_references": [
+        "0x80f1298",
+        "0x80f12b0",
+        "0x80f12c8",
+        "0x80f12e0",
+        "0x80f12f8",
+        "0x80f1310",
+        "0x80f1328",
+        "0x80f1340",
+        "0x80f1358",
+        "0x80f1458",
+        "0x80f1470",
+        "0x80f1488",
+        "0x80f14a0",
+        "0x80f14b8",
+        "0x80f14d0",
+        "0x80f14e8",
+        "0x80f1500",
+        "0x80f1518"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a060",
+      "first_instructions": [
+        "0805A060: push {r4, lr}",
+        "0805A062: ldr r0, [r0, #0x68]",
+        "0805A064: cmp r0, #9",
+        "0805A066: bgt #0x805a074",
+        "0805A068: lsls r1, r0, #5",
+        "0805A06A: ldr r0, [pc, #4]"
+      ],
+      "rom_references": [
+        "0x80f1378",
+        "0x80f1390",
+        "0x80f13a8",
+        "0x80f13c0",
+        "0x80f13d8",
+        "0x80f13f0",
+        "0x80f1408",
+        "0x80f1420",
+        "0x80f1438",
+        "0x80f1538",
+        "0x80f1550",
+        "0x80f1568",
+        "0x80f1580",
+        "0x80f1598",
+        "0x80f15b0",
+        "0x80f15c8",
+        "0x80f15e0",
+        "0x80f15f8"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a0a0",
+      "first_instructions": [
+        "0805A0A0: push {r4, lr}",
+        "0805A0A2: ldr r0, [r0, #0x68]",
+        "0805A0A4: ldr r1, [pc, #0x24]",
+        "0805A0A6: lsls r0, r0, #2",
+        "0805A0A8: adds r0, r0, r1",
+        "0805A0AA: ldr r4, [r0]"
+      ],
+      "rom_references": [
+        "0x80f1618",
+        "0x80f1630",
+        "0x80f1648",
+        "0x80f1660",
+        "0x80f1678",
+        "0x80f1690",
+        "0x80f16a8",
+        "0x80f16c0",
+        "0x80f16d8",
+        "0x80f16f0"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a0d0",
+      "first_instructions": [
+        "0805A0D0: push {r4, lr}",
+        "0805A0D2: ldr r4, [r0, #0x68]",
+        "0805A0D4: lsls r4, r4, #5",
+        "0805A0D6: ldr r0, [pc, #0x20]",
+        "0805A0D8: adds r4, r4, r0",
+        "0805A0DA: movs r0, #0"
+      ],
+      "rom_references": [
+        "0x80f1728",
+        "0x80f1740",
+        "0x80f1758"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a0fc",
+      "first_instructions": [
+        "0805A0FC: push {r4, lr}",
+        "0805A0FE: ldr r4, [r0, #0x68]",
+        "0805A100: lsls r4, r4, #5",
+        "0805A102: ldr r0, [pc, #0x20]",
+        "0805A104: adds r4, r4, r0",
+        "0805A106: movs r0, #0"
+      ],
+      "rom_references": [
+        "0x80f1778",
+        "0x80f1790",
+        "0x80f17a8",
+        "0x80f17c0"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a128",
+      "first_instructions": [
+        "0805A128: push {r4, lr}",
+        "0805A12A: ldr r4, [r0, #0x68]",
+        "0805A12C: lsls r4, r4, #5",
+        "0805A12E: ldr r0, [pc, #0x20]",
+        "0805A130: adds r4, r4, r0",
+        "0805A132: movs r0, #0"
+      ],
+      "rom_references": [
+        "0x80f17e8",
+        "0x80f1800",
+        "0x80f1818",
+        "0x80f1830",
+        "0x80f1848",
+        "0x80f1860",
+        "0x80f1878"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a154",
+      "first_instructions": [
+        "0805A154: push {r4, lr}",
+        "0805A156: ldr r4, [r0, #0x68]",
+        "0805A158: lsls r4, r4, #5",
+        "0805A15A: ldr r0, [pc, #0x28]",
+        "0805A15C: adds r4, r4, r0",
+        "0805A15E: movs r0, #0"
+      ],
+      "rom_references": [
+        "0x80f1898",
+        "0x80f18b0",
+        "0x80f18c8",
+        "0x80f18e0",
+        "0x80f18f8",
+        "0x80f1910",
+        "0x80f1928",
+        "0x80f1940",
+        "0x80f1958",
+        "0x80f1970"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a188",
+      "first_instructions": [
+        "0805A188: push {r4, lr}",
+        "0805A18A: ldr r4, [r0, #0x68]",
+        "0805A18C: lsls r4, r4, #5",
+        "0805A18E: ldr r0, [pc, #0x20]",
+        "0805A190: adds r4, r4, r0",
+        "0805A192: movs r0, #0"
+      ],
+      "rom_references": [
+        "0x80f1990",
+        "0x80f19a8",
+        "0x80f19c0",
+        "0x80f19d8",
+        "0x80f19f0",
+        "0x80f1a08"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a1b4",
+      "first_instructions": [
+        "0805A1B4: push {r4, lr}",
+        "0805A1B6: ldr r0, [r0, #0x68]",
+        "0805A1B8: ldr r1, [pc, #0x24]",
+        "0805A1BA: lsls r0, r0, #2",
+        "0805A1BC: adds r0, r0, r1",
+        "0805A1BE: ldr r4, [r0]"
+      ],
+      "rom_references": [
+        "0x80f1a40",
+        "0x80f1a58",
+        "0x80f1a70",
+        "0x80f1a88",
+        "0x80f1aa0",
+        "0x80f1ab8",
+        "0x80f1ad0",
+        "0x80f1ae8",
+        "0x80f1b00",
+        "0x80f1b18"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a214",
+      "first_instructions": [
+        "0805A214: push {r4, lr}",
+        "0805A216: ldr r0, [r0, #0x68]",
+        "0805A218: ldr r1, [pc, #0x24]",
+        "0805A21A: lsls r0, r0, #2",
+        "0805A21C: adds r0, r0, r1",
+        "0805A21E: ldr r4, [r0]"
+      ],
+      "rom_references": [
+        "0x80f1ba8",
+        "0x80f1bc0",
+        "0x80f1bd8",
+        "0x80f1bf0",
+        "0x80f1c08"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a244",
+      "first_instructions": [
+        "0805A244: push {r4, lr}",
+        "0805A246: ldr r0, [r0, #0x68]",
+        "0805A248: ldr r1, [pc, #0x24]",
+        "0805A24A: lsls r0, r0, #2",
+        "0805A24C: adds r0, r0, r1",
+        "0805A24E: ldr r4, [r0]"
+      ],
+      "rom_references": [
+        "0x80f1c3c",
+        "0x80f1c54",
+        "0x80f1c6c",
+        "0x80f1c84",
+        "0x80f1c9c"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a274",
+      "first_instructions": [
+        "0805A274: push {r4, lr}",
+        "0805A276: ldr r0, [r0, #0x68]",
+        "0805A278: ldr r1, [pc, #0x24]",
+        "0805A27A: lsls r0, r0, #2",
+        "0805A27C: adds r0, r0, r1",
+        "0805A27E: ldr r4, [r0]"
+      ],
+      "rom_references": [
+        "0x80f1cec",
+        "0x80f1d04",
+        "0x80f1d1c",
+        "0x80f1d34",
+        "0x80f1d4c",
+        "0x80f1d64",
+        "0x80f1d7c",
+        "0x80f1d94",
+        "0x80f1dac",
+        "0x80f1dc4",
+        "0x80f1ddc",
+        "0x80f1df4"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a2a4",
+      "first_instructions": [
+        "0805A2A4: push {r4, lr}",
+        "0805A2A6: ldr r0, [r0, #0x68]",
+        "0805A2A8: ldr r1, [pc, #0x24]",
+        "0805A2AA: lsls r0, r0, #2",
+        "0805A2AC: adds r0, r0, r1",
+        "0805A2AE: ldr r4, [r0]"
+      ],
+      "rom_references": [
+        "0x80f1e40",
+        "0x80f1e58",
+        "0x80f1e70",
+        "0x80f1e88",
+        "0x80f1ea0",
+        "0x80f1eb8",
+        "0x80f1ed0",
+        "0x80f1ee8",
+        "0x80f1f00",
+        "0x80f1f18",
+        "0x80f1f30"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a320",
+      "first_instructions": [
+        "0805A320: push {r4, r5, lr}",
+        "0805A322: ldr r4, [r0, #0x68]",
+        "0805A324: ldr r0, [pc, #0x3c]",
+        "0805A326: lsls r4, r4, #2",
+        "0805A328: adds r0, r4, r0",
+        "0805A32A: ldr r5, [r0]"
+      ],
+      "rom_references": [
+        "0x80f1f88",
+        "0x80f1fa0",
+        "0x80f1fb8",
+        "0x80f1fd0",
+        "0x80f1fe8",
+        "0x80f2000",
+        "0x80f2018",
+        "0x80f2030",
+        "0x80f2048",
+        "0x80f2060",
+        "0x80f2078",
+        "0x80f2090"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a36c",
+      "first_instructions": [
+        "0805A36C: push {r4, lr}",
+        "0805A36E: ldr r0, [r0, #0x68]",
+        "0805A370: ldr r1, [pc, #0x24]",
+        "0805A372: lsls r0, r0, #2",
+        "0805A374: adds r0, r0, r1",
+        "0805A376: ldr r4, [r0]"
+      ],
+      "rom_references": [
+        "0x80f20c0",
+        "0x80f20d8",
+        "0x80f20f0",
+        "0x80f2108"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a39c",
+      "first_instructions": [
+        "0805A39C: push {r4, lr}",
+        "0805A39E: ldr r0, [r0, #0x68]",
+        "0805A3A0: ldr r1, [pc, #0x24]",
+        "0805A3A2: lsls r0, r0, #2",
+        "0805A3A4: adds r0, r0, r1",
+        "0805A3A6: ldr r4, [r0]"
+      ],
+      "rom_references": [
+        "0x80f2138",
+        "0x80f2150",
+        "0x80f2168",
+        "0x80f2180",
+        "0x80f2198",
+        "0x80f21b0"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a3cc",
+      "first_instructions": [
+        "0805A3CC: push {r4, lr}",
+        "0805A3CE: ldr r0, [r0, #0x68]",
+        "0805A3D0: ldr r1, [pc, #0x24]",
+        "0805A3D2: lsls r0, r0, #2",
+        "0805A3D4: adds r0, r0, r1",
+        "0805A3D6: ldr r4, [r0]"
+      ],
+      "rom_references": [
+        "0x80f21dc",
+        "0x80f21f4",
+        "0x80f220c"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a3fc",
+      "first_instructions": [
+        "0805A3FC: push {r4, lr}",
+        "0805A3FE: ldr r0, [r0, #0x68]",
+        "0805A400: ldr r1, [pc, #0x24]",
+        "0805A402: lsls r0, r0, #2",
+        "0805A404: adds r0, r0, r1",
+        "0805A406: ldr r4, [r0]"
+      ],
+      "rom_references": [
+        "0x80f223c",
+        "0x80f2254",
+        "0x80f226c",
+        "0x80f2284"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a42c",
+      "first_instructions": [
+        "0805A42C: push {r4, r5, lr}",
+        "0805A42E: ldr r0, [r0, #0x68]",
+        "0805A430: ldr r1, [pc, #0x3c]",
+        "0805A432: lsls r0, r0, #2",
+        "0805A434: adds r0, r0, r1",
+        "0805A436: ldr r4, [r0]"
+      ],
+      "rom_references": [
+        "0x80f22a4",
+        "0x80f22bc",
+        "0x80f22d4"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a474",
+      "first_instructions": [
+        "0805A474: push {r4, lr}",
+        "0805A476: ldr r0, [r0, #0x68]",
+        "0805A478: ldr r1, [pc, #0x24]",
+        "0805A47A: lsls r0, r0, #2",
+        "0805A47C: adds r0, r0, r1",
+        "0805A47E: ldr r4, [r0]"
+      ],
+      "rom_references": [
+        "0x80f2314",
+        "0x80f232c",
+        "0x80f2344",
+        "0x80f235c",
+        "0x80f2374",
+        "0x80f238c",
+        "0x80f23a4",
+        "0x80f23bc"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a4a4",
+      "first_instructions": [
+        "0805A4A4: push {r4, lr}",
+        "0805A4A6: ldr r0, [r0, #0x68]",
+        "0805A4A8: ldr r1, [pc, #0x24]",
+        "0805A4AA: lsls r0, r0, #2",
+        "0805A4AC: adds r0, r0, r1",
+        "0805A4AE: ldr r4, [r0]"
+      ],
+      "rom_references": [
+        "0x80f23f4",
+        "0x80f240c",
+        "0x80f2424",
+        "0x80f243c",
+        "0x80f2454",
+        "0x80f246c",
+        "0x80f2484",
+        "0x80f249c",
+        "0x80f24b4",
+        "0x80f24cc"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a4d4",
+      "first_instructions": [
+        "0805A4D4: push {r4, lr}",
+        "0805A4D6: ldr r0, [r0, #0x68]",
+        "0805A4D8: ldr r1, [pc, #0x24]",
+        "0805A4DA: lsls r0, r0, #2",
+        "0805A4DC: adds r0, r0, r1",
+        "0805A4DE: ldr r4, [r0]"
+      ],
+      "rom_references": [
+        "0x80f24f8",
+        "0x80f2510",
+        "0x80f2528",
+        "0x80f2540"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a504",
+      "first_instructions": [
+        "0805A504: push {r4, lr}",
+        "0805A506: ldr r0, [r0, #0x68]",
+        "0805A508: ldr r1, [pc, #0x24]",
+        "0805A50A: lsls r0, r0, #2",
+        "0805A50C: adds r0, r0, r1",
+        "0805A50E: ldr r4, [r0]"
+      ],
+      "rom_references": [
+        "0x80f2578",
+        "0x80f2590",
+        "0x80f25a8",
+        "0x80f25c0",
+        "0x80f25d8",
+        "0x80f25f0",
+        "0x80f2608",
+        "0x80f2620",
+        "0x80f2638",
+        "0x80f2650"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a534",
+      "first_instructions": [
+        "0805A534: push {r4, lr}",
+        "0805A536: ldr r4, [r0, #0x68]",
+        "0805A538: lsls r4, r4, #5",
+        "0805A53A: ldr r0, [pc, #0x20]",
+        "0805A53C: adds r4, r4, r0",
+        "0805A53E: movs r0, #0"
+      ],
+      "rom_references": [
+        "0x80f2670",
+        "0x80f2688",
+        "0x80f26a0",
+        "0x80f26b8",
+        "0x80f26d0",
+        "0x80f26e8"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a560",
+      "first_instructions": [
+        "0805A560: push {r4, lr}",
+        "0805A562: ldr r4, [r0, #0x68]",
+        "0805A564: lsls r4, r4, #5",
+        "0805A566: ldr r0, [pc, #0x20]",
+        "0805A568: adds r4, r4, r0",
+        "0805A56A: movs r0, #0"
+      ],
+      "rom_references": [
+        "0x80f2708",
+        "0x80f2720",
+        "0x80f2738",
+        "0x80f2750",
+        "0x80f2768",
+        "0x80f2780"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a58c",
+      "first_instructions": [
+        "0805A58C: push {r4, lr}",
+        "0805A58E: ldr r0, [r0, #0x68]",
+        "0805A590: ldr r1, [pc, #0x24]",
+        "0805A592: lsls r0, r0, #2",
+        "0805A594: adds r0, r0, r1",
+        "0805A596: ldr r4, [r0]"
+      ],
+      "rom_references": [
+        "0x80f27c0",
+        "0x80f27d8",
+        "0x80f27f0",
+        "0x80f2808",
+        "0x80f2820",
+        "0x80f2838",
+        "0x80f2850",
+        "0x80f2868"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    },
+    {
+      "address": "0x805a5bc",
+      "first_instructions": [
+        "0805A5BC: push {r4, lr}",
+        "0805A5BE: ldr r0, [r0, #0x68]",
+        "0805A5C0: ldr r1, [pc, #0x28]",
+        "0805A5C2: lsls r0, r0, #2",
+        "0805A5C4: adds r0, r0, r1",
+        "0805A5C6: ldr r4, [r0]"
+      ],
+      "rom_references": [
+        "0x80f28ac",
+        "0x80f28c4",
+        "0x80f28dc",
+        "0x80f28f4",
+        "0x80f290c",
+        "0x80f2924",
+        "0x80f293c",
+        "0x80f2954",
+        "0x80f296c"
+      ],
+      "reason": "Standalone address-taken actor/script callback, not a computed-switch case"
+    }
+  ]
+}

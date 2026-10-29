@@ -680,3 +680,193 @@ addr = 0x08050DF8
 mode = "thumb"
 name = "time_trial_result_08050df8"
 note = "Confirmed function boundary and live indirect-dispatch target after finishing Time Trial"
+
+# All-course actor/script closure (beads-5ae.1.7). These are standalone
+# address-taken routine starts, not one computed-jump switch despite their
+# proximity. Original ROM references are retained in docs/COURSE-CALLBACKS.json.
+
+[[extra_func]]
+addr = 0x0804F9E4
+mode = "thumb"
+name = "course_callback_0804f9e4"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080EF924; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x08050C68
+mode = "thumb"
+name = "course_callback_08050c68"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080EF87C; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x08050CB8
+mode = "thumb"
+name = "course_callback_08050cb8"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080EF8B4; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x08050D0C
+mode = "thumb"
+name = "course_callback_08050d0c"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x08050D08; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A020
+mode = "thumb"
+name = "course_callback_0805a020"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F1298; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A060
+mode = "thumb"
+name = "course_callback_0805a060"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F1378; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A0A0
+mode = "thumb"
+name = "course_callback_0805a0a0"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F1618; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A0D0
+mode = "thumb"
+name = "course_callback_0805a0d0"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F1728; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A0FC
+mode = "thumb"
+name = "course_callback_0805a0fc"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F1778; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A128
+mode = "thumb"
+name = "course_callback_0805a128"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F17E8; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A154
+mode = "thumb"
+name = "course_callback_0805a154"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F1898; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A188
+mode = "thumb"
+name = "course_callback_0805a188"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F1990; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A1B4
+mode = "thumb"
+name = "course_callback_0805a1b4"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F1A40; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A214
+mode = "thumb"
+name = "course_callback_0805a214"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F1BA8; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A244
+mode = "thumb"
+name = "course_callback_0805a244"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F1C3C; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A274
+mode = "thumb"
+name = "course_callback_0805a274"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F1CEC; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A2A4
+mode = "thumb"
+name = "course_callback_0805a2a4"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F1E40; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A320
+mode = "thumb"
+name = "course_callback_0805a320"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F1F88; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A36C
+mode = "thumb"
+name = "course_callback_0805a36c"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F20C0; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A39C
+mode = "thumb"
+name = "course_callback_0805a39c"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F2138; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A3CC
+mode = "thumb"
+name = "course_callback_0805a3cc"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F21DC; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A3FC
+mode = "thumb"
+name = "course_callback_0805a3fc"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F223C; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A42C
+mode = "thumb"
+name = "course_callback_0805a42c"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F22A4; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A474
+mode = "thumb"
+name = "course_callback_0805a474"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F2314; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A4A4
+mode = "thumb"
+name = "course_callback_0805a4a4"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F23F4; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A4D4
+mode = "thumb"
+name = "course_callback_0805a4d4"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F24F8; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A504
+mode = "thumb"
+name = "course_callback_0805a504"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F2578; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A534
+mode = "thumb"
+name = "course_callback_0805a534"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F2670; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A560
+mode = "thumb"
+name = "course_callback_0805a560"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F2708; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A58C
+mode = "thumb"
+name = "course_callback_0805a58c"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F27C0; all-course audit beads-5ae.1.7"
+
+[[extra_func]]
+addr = 0x0805A5BC
+mode = "thumb"
+name = "course_callback_0805a5bc"
+note = "Reviewed standalone AMKE0 callback; address-taken at 0x080F28AC; all-course audit beads-5ae.1.7"
