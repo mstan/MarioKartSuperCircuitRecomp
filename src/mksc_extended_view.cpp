@@ -27,6 +27,7 @@ const gba::GbaBus* cached_bus = nullptr;
 unsigned long long cached_vblank = ~0ull;
 unsigned long long cached_epoch = ~0ull;
 bool cached_race = false;
+bool cached_battle = false;
 
 struct HudRect {
     int x0;
@@ -66,33 +67,19 @@ bool race_register_layout(const std::uint8_t* io) {
     if ((dispcnt & 0xE000u) != 0) return false;       // transition windows
 
     const std::uint16_t bg0cnt = read16(io, 0x08);
-    const std::uint16_t bg1cnt = read16(io, 0x0A);
-    const std::uint16_t bg2cnt = read16(io, 0x0C);
-    const std::uint16_t bg3cnt = read16(io, 0x0E);
-
-    // During a race the perspective road lives in the sole 512-pixel-wide
-    // regular background. The other three rings are 256 pixels wide, with
-    // BG0 at HUD priority and the scenery layers behind it. This signature
-    // excludes the title, selection screens, and Mode 1 cup previews.
-    const bool standard_race =
-        (bg1cnt & 0xC003u) == 0x0003u &&
-        (bg2cnt & 0xC003u) == 0x4003u;
-
-    // The pause overlay preserves the Mode 0 horizon layout, but switches
-    // the lower Mode 1 scanlines to a second road buffer. Keep extending the
-    // underlying race scene there; sprites still draw the menu only once in
-    // the native-width center.
-    const bool paused_lower_race =
-        mode == 1 &&
-        (bg1cnt & 0xC003u) == 0x0001u &&
-        (bg2cnt & 0xC003u) == 0xC001u;
-
-    return (bg0cnt & 0xC003u) == 0x0000u &&
-           (bg3cnt & 0xC003u) == 0x0003u &&
-           (standard_race || paused_lower_race);
+    // Mode 0 contains the course's sky rings, not the affine road. Their
+    // authored map dimensions vary by sky (Riverside Park uses a 256-pixel
+    // BG2, while Peach Circuit uses 512), as do their priorities (Sky Garden
+    // and Rainbow Road use priorities 3/2/1). The paused lower road buffer
+    // varies too. None of BG1-3's content settings identifies a race.
+    // The HUD owns character block 0 and screen block 7, or block 6 during
+    // the lower Mode 1 phase. Require that layout and the live HUD tiles below;
+    // menus/previews cannot qualify merely by leaving an old HUD map in VRAM.
+    return bg0cnt == 0x0700u || bg0cnt == 0x0600u;
 }
 
 bool compute_race_layout(const gba::GbaBus* bus) {
+    cached_battle = false;
     if (!bus) return false;
     const std::uint8_t* io = bus->io().raw();
     if (!race_register_layout(io)) return false;
@@ -117,6 +104,23 @@ bool compute_race_layout(const gba::GbaBus* bus) {
     const std::uint8_t* vram = bus->vram_ptr();
     if (!vram || map_base + (kRightTextTiles[2] + 1u) * 2u > kVramBytes)
         return false;
+    // Battle has portraits/balloons instead of LAP/TIME. Require the battle
+    // mode, actual player count, first portrait's frame and centered item-box
+    // frame. Rankings replace these tiles even though the road registers and
+    // battle flag survive. Scenery dimensions are still course-owned.
+    const auto* iwram = bus->iwram_ptr();
+    if ((read16(iwram, 0x361E) & 0x0800u) != 0) {
+        if (iwram[0x361B] < 2 || iwram[0x361B] > 4) return false;
+        constexpr std::uint16_t portrait[] = {4, 5, 5, 4};
+        constexpr std::uint16_t item[] = {0x74, 0x76, 0x76, 0x74};
+        for (unsigned i = 0; i < 4; ++i) {
+            if ((read16(vram, map_base + (2u * 32u + i) * 2u) & 0x3FFu) != portrait[i] ||
+                (read16(vram, map_base + (13u + i) * 2u) & 0x3FFu) != item[i])
+                return false;
+        }
+        cached_battle = true;
+        return true;
+    }
     for (unsigned i = 0; i < 3; ++i) {
         // Palette-bank and flip attributes are applied while the frame is
         // rendered; the tile identity in bits 0..9 is the stable signature.
@@ -286,6 +290,16 @@ int race_hud_obj_x_provider(int oam_index, std::uint16_t attr0,
     // Race OAM slots 0-7 are its eight 8x8 minimap markers. Attribute 2 is
     // rewritten during the frame and differs between parked OAM and the
     // scanline latch, so identify them by their stable slot/shape/map bounds.
+    // Battle HUD balloons precede its minimap markers in OAM. Their small
+    // vertical cell (tile E8, palette 1) is drawn at x=24/29/34, y=24+24*player.
+    // Move them with the portrait plane, without translating world balloons.
+    if (out_x && bus && g_ws_extra_left != 0 && race_layout(bus) && cached_battle &&
+        (attr0 & 0xFF00u) == 0x8000u && (attr1 & 0xFE00u) == 0 &&
+        attr2 == 0x10E8u && (raw_x == 24 || raw_x == 29 || raw_x == 34) &&
+        y >= 24 && y <= 96 && (y - 24) % 24 == 0) {
+        *out_x = raw_x - static_cast<int>(g_ws_extra_left);
+        return 1;
+    }
     if (out_x && bus && g_ws_extra_right != 0 &&
         race_layout(bus) &&
         oam_index >= 0 && oam_index < 8 &&
@@ -370,6 +384,7 @@ void reset_extended_view() {
     cached_vblank = ~0ull;
     cached_epoch = ~0ull;
     cached_race = false;
+    cached_battle = false;
     reset_margin_objects();
 }
 

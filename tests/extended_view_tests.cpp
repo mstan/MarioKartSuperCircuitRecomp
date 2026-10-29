@@ -38,6 +38,35 @@ int main() {
     auto bus = std::make_unique<gba::GbaBus>();
     gbarecomp::set_active_bus(bus.get());
     mksc::install_extended_view(0, 0);
+    int x = -999;
+    g_ws_extra_left = 120;
+    g_ws_extra_right = 120;
+    race(*bus);
+    bus->write16(0x0300361E, 0x0880);
+    bus->write8(0x0300361B, 2);
+    bus->write16(0x06003808, 0); // no LAP label in battle
+    for (unsigned i = 0; i < 4; ++i) {
+        constexpr unsigned portrait[] = {4, 5, 5, 4};
+        constexpr unsigned item[] = {0x74, 0x76, 0x76, 0x74};
+        bus->write16(0x06003800 + (2 * 32 + i) * 2, portrait[i]);
+        bus->write16(0x06003800 + (13 + i) * 2, item[i]);
+    }
+    std::uint16_t battle_entry = 0;
+    check(gba::g_ws_tilemap_provider(2, -22, 70, &battle_entry) ==
+              gba::kWsTilemapKeepWrapped && !gba::g_ws_pillarbox,
+          "live battle HUD authorizes actual arena margins");
+    for (int slot = 0; slot < 128; ++slot) {
+        check(gba::g_ws_obj_attr_x_provider(slot, 0x8018, 29, 0x10E8, &x) == 1 && x == -91,
+              "battle balloons stay attached to left-anchored portraits");
+    }
+    check(gba::g_ws_obj_attr_x_provider(8, 0x8078, 100, 0x10E8, &x) == 0,
+          "world balloons are not moved with the battle HUD");
+    bus->write16(0x06003800 + 2 * 32 * 2, 0); // rankings replace portrait frame
+    ++g_runtime_vblank_starts;
+    check(gba::g_ws_tilemap_provider(2, -22, 70, &battle_entry) ==
+              gba::kWsTilemapUnavailable && gba::g_ws_pillarbox,
+          "battle rankings retain native framing");
+    bus->write16(0x0300361E, 0x0180);
     race(*bus);
     for (unsigned left : {0u, 1u, 22u, 23u, 48u, 93u, 120u}) {
         g_ws_extra_left = left;
@@ -65,7 +94,40 @@ int main() {
     }
     g_ws_extra_left = 120;
     g_ws_extra_right = 120;
-    int x = -999;
+    x = -999;
+    // Sky-map dimensions belong to course content. Recognize the same live
+    // HUD with either 256- or 512-pixel sky rings, and keep actual background
+    // samples available in both margins rather than pillarboxing the race.
+    for (unsigned bg1_size : {0u, 0x4000u}) {
+        for (unsigned bg2_size : {0u, 0x4000u}) {
+            for (unsigned bg3_size : {0u, 0x4000u}) {
+                race(*bus);
+                bus->write16(0x0400000A, bg1_size | 3);
+                bus->write16(0x0400000C, bg2_size | 3);
+                bus->write16(0x0400000E, bg3_size | 3);
+                std::uint16_t entry = 0;
+                check(gba::g_ws_tilemap_provider(2, -22, 70, &entry) ==
+                          gba::kWsTilemapKeepWrapped && !gba::g_ws_pillarbox,
+                      "course sky sizes do not pillarbox live race margins");
+                check(gba::g_ws_bg_x_provider(0, 0, 0, &x) == 1 && x == 0,
+                      "HUD stays edge anchored for every sky-map size");
+            }
+        }
+    }
+    race(*bus);
+    bus->write16(0x0400000A, 0x0C07); // Sky Garden
+    bus->write16(0x0400000C, 0x4D06);
+    bus->write16(0x0400000E, 0x0F05);
+    std::uint16_t entry = 0;
+    check(gba::g_ws_tilemap_provider(2, 261, 70, &entry) ==
+              gba::kWsTilemapKeepWrapped && !gba::g_ws_pillarbox,
+          "course-specific scenery priorities keep real right-margin samples");
+    race(*bus);
+    bus->write16(0x04000008, 0x0400);
+    check(gba::g_ws_tilemap_provider(2, -22, 70, &entry) ==
+              gba::kWsTilemapUnavailable && gba::g_ws_pillarbox,
+          "menu background cannot reuse a stale race HUD in screen block 7");
+    race(*bus);
     check(gba::g_ws_bg_x_provider(0, 160, 116, &x) == -1,
           "original upper-right rim is removed");
     for (auto attrs : {std::array<std::uint16_t, 3>{0x0068, 0xC1F8, 0x73C0},

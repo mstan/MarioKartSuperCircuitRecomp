@@ -28,6 +28,10 @@ v0.1.8 is the first release containing that optimization.
 
 ## Boundary
 
+The unreleased [course-dependent 16:9 follow-up](COURSE-WIDESCREEN-2026-10-28.md)
+records the later all-course border audit. Its scope is separate from the
+historical pilot measurements below.
+
 The title authorizes mode-1 BG2 sampling before the race HUD appears, including
 course previews and the fly-in. Widescreen/HUD placement still uses its stricter
 race-layout recognition. The engine consumes each published raster row, preserves layer/window/blend order,
