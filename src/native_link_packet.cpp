@@ -36,11 +36,18 @@ int publish(std::uint32_t, int thumb, ArmCpuState* cpu) {
     // Resume/partial-loop entries keep the generated implementation.
     if (!bus || !thumb || cpu != &g_cpu || cpu->R[15] != kEntry ||
         g_runtime_resume_pc || !(cpu->cpsr & CPSR_I_BIT) ||
+        g_runtime_thumb_alu_imm_override || g_runtime_fn_entry_hook ||
         cpu->R[7] != 0 || cpu->R[4] != 0x03000218 ||
         cpu->R[5] != 0x03000270 || cpu->R[12] != 0x030002b8 ||
         !bus->rom_ptr() || bus->rom_size() != 0x400000 ||
         std::memcmp(bus->rom_ptr() + 0x2de60, kCode.data(), kCode.size()) ||
         word(bus->iwram_ptr() + 0x2b8) != 0x080de17c) return 0;
+    // Keep sparse dispatch observers (including the ordinary MP2K observer)
+    // outside this transaction. An observer of a skipped driver entry instead
+    // retains its complete generated dispatch/caller window.
+    for (unsigned i = 0; i != g_runtime_observed_pc_count; ++i)
+        if (g_runtime_observed_pcs[i] >= kEntry && g_runtime_observed_pcs[i] < kEnd)
+            return 0;
     for (unsigned port = 0; port != 4; ++port) {
         const auto base = 0x030001c8u + 16u * port;
         const auto* descriptor = bus->rom_ptr() + 0xde188 + port * 8;
