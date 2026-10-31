@@ -70,7 +70,7 @@ add_executable(MarioKartSuperCircuitRecomp
 
 # Reviewed USA cable SDK service. Other linkers retain the generated driver.
 # This build selection participates in the startup simulation identity.
-option(MKSC_NATIVE_LINK_PACKET "Use the qualified native receive-packet publisher" OFF)
+option(MKSC_NATIVE_LINK_PACKET "Use the native receive-packet qualification implementation" OFF)
 if(MKSC_NATIVE_LINK_PACKET)
     if(NOT MSVC AND NOT APPLE AND NOT EMSCRIPTEN)
         target_sources(MarioKartSuperCircuitRecomp PRIVATE src/native_link_packet.cpp)
@@ -106,7 +106,7 @@ if(GBARECOMP_MP2K_IMPLEMENTATION STREQUAL "HLE" OR MKSC_MP2K_PROBE)
         target_link_options(MarioKartSuperCircuitRecomp PRIVATE
             -Wl,--wrap=ram_aot_${_mp2k_index})
         if(GBARECOMP_MP2K_IMPLEMENTATION STREQUAL "HLE")
-            set_property(TARGET MarioKartSuperCircuitRecomp PROPERTY
+            set_property(TARGET MarioKartSuperCircuitRecomp APPEND PROPERTY
                 GBARECOMP_NATIVE_SERVICES mksc-mp2k-mono-v1)
             set_property(SOURCE src/native_soundmain.cpp APPEND PROPERTY
                 COMPILE_DEFINITIONS MKSC_MP2K_NATIVE=1)
