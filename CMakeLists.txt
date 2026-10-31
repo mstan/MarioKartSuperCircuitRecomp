@@ -68,6 +68,21 @@ add_executable(MarioKartSuperCircuitRecomp
     src/mods/mksc_internal_resolution_plugin.cpp
     ${GAME_GENERATED_SOURCES})
 
+# Reviewed USA cable SDK service. Other linkers retain the generated driver.
+# This build selection participates in the startup simulation identity.
+option(MKSC_NATIVE_LINK_PACKET "Use the qualified native receive-packet publisher" OFF)
+if(MKSC_NATIVE_LINK_PACKET)
+    if(NOT MSVC AND NOT APPLE AND NOT EMSCRIPTEN)
+        target_sources(MarioKartSuperCircuitRecomp PRIVATE src/native_link_packet.cpp)
+        target_link_options(MarioKartSuperCircuitRecomp PRIVATE
+            -Wl,--wrap=gf_tfunc_0802DE60)
+        set_property(TARGET MarioKartSuperCircuitRecomp APPEND PROPERTY
+            GBARECOMP_NATIVE_SERVICES mksc-native-receive-packet-v1)
+    else()
+        message(STATUS "Native receive-packet binding unavailable; retaining portable generated driver")
+    endif()
+endif()
+
 # Isolated qualification binding for the reviewed MKSC USA mono SDK driver.
 # The source implementation is portable; linkers without --wrap keep the
 # maintained LLE body. This is build selection, never a player-facing mod.
