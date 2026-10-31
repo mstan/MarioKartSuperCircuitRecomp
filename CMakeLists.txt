@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(MarioKartSuperCircuitRecomp VERSION 0.1.11 LANGUAGES C CXX)
+project(MarioKartSuperCircuitRecomp VERSION 0.1.12 LANGUAGES C CXX)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 20)
@@ -68,6 +68,21 @@ add_executable(MarioKartSuperCircuitRecomp
     src/mods/mksc_internal_resolution_plugin.cpp
     ${GAME_GENERATED_SOURCES})
 
+# Reviewed USA cable SDK service. Other linkers retain the generated driver.
+# This build selection participates in the startup simulation identity.
+option(MKSC_NATIVE_LINK_PACKET "Use the native receive-packet qualification implementation" OFF)
+if(MKSC_NATIVE_LINK_PACKET)
+    if(NOT MSVC AND NOT APPLE AND NOT EMSCRIPTEN)
+        target_sources(MarioKartSuperCircuitRecomp PRIVATE src/native_link_packet.cpp)
+        target_link_options(MarioKartSuperCircuitRecomp PRIVATE
+            -Wl,--wrap=gf_tfunc_0802DE60)
+        set_property(TARGET MarioKartSuperCircuitRecomp APPEND PROPERTY
+            GBARECOMP_NATIVE_SERVICES mksc-native-receive-packet-v1)
+    else()
+        message(STATUS "Native receive-packet binding unavailable; retaining portable generated driver")
+    endif()
+endif()
+
 # Isolated qualification binding for the reviewed MKSC USA mono SDK driver.
 # The source implementation is portable; linkers without --wrap keep the
 # maintained LLE body. This is build selection, never a player-facing mod.
@@ -91,7 +106,7 @@ if(GBARECOMP_MP2K_IMPLEMENTATION STREQUAL "HLE" OR MKSC_MP2K_PROBE)
         target_link_options(MarioKartSuperCircuitRecomp PRIVATE
             -Wl,--wrap=ram_aot_${_mp2k_index})
         if(GBARECOMP_MP2K_IMPLEMENTATION STREQUAL "HLE")
-            set_property(TARGET MarioKartSuperCircuitRecomp PROPERTY
+            set_property(TARGET MarioKartSuperCircuitRecomp APPEND PROPERTY
                 GBARECOMP_NATIVE_SERVICES mksc-mp2k-mono-v1)
             set_property(SOURCE src/native_soundmain.cpp APPEND PROPERTY
                 COMPILE_DEFINITIONS MKSC_MP2K_NATIVE=1)
