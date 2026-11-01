@@ -194,8 +194,9 @@ It has no affiliation with or endorsement from Nintendo.
    Expected SHA-1: $expectedSha1
 4. Select your legally obtained retail gba_bios.bin under Settings > System.
 5. Open Mods to enable Higher Internal Resolution and choose 2x, 3x, 4x, 8x,
-   16x, 32x or 64x. The mod starts at 4x. Higher scales are experimental;
-   performance and available resolution depend on your GPU. Supported hosts
+   16x, 32x, 64x or 128x. The mod starts at 4x. Higher scales are experimental;
+   performance and available resolution depend on your GPU. 128x needs substantial
+   memory, and GPU limits can reduce the actual output resolution. Supported hosts
    use resident GPU rendering, with a portable CPU fallback.
 6. In Display, choose 16:9 or Adaptive to widen the single-player race view.
    Native (3:2) keeps side bars on a wide display. Default (Mods) retains the
