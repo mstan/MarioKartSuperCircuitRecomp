@@ -148,6 +148,7 @@ if (-not (Test-Path -LiteralPath (Join-Path $mods 'packages'))) {
 }
 Copy-Item -LiteralPath $mods -Destination (Join-Path $stage 'mods') -Recurse
 Copy-Item -LiteralPath (Join-Path $root 'LICENSE') -Destination $stage
+Copy-Item -LiteralPath (Join-Path $root 'PERMISSIONS.md') -Destination $stage
 & (Get-Command python.exe).Source (Join-Path $root 'tools\collect_licenses.py') `
     $engine $ui (Join-Path $stage 'licenses') --mingw (Split-Path $mingwBin)
 if ($LASTEXITCODE -ne 0) { throw 'Dependency notice staging failed.' }
