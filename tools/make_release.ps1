@@ -16,7 +16,8 @@ param(
     [string]$RecompUiRoot = '',
     [string]$GeneratedRoot = '',
     [string]$GeneratedBiosDir = '',
-    [ValidateRange(1, 32)][int]$Jobs = 4
+    [ValidateRange(1, 32)][int]$Jobs = 2,
+    [switch]$SkipBuild
 )
 
 $ErrorActionPreference = 'Stop'
@@ -48,7 +49,7 @@ foreach ($entry in @(@('gbarecomp', $engine), @('recomp-ui', $ui))) {
         throw "$($entry[0]) has uncommitted tracked changes"
     }
 }
-$build = Join-Path $root $BuildDir
+$build = if ([IO.Path]::IsPathRooted($BuildDir)) { [IO.Path]::GetFullPath($BuildDir) } else { Join-Path $root $BuildDir }
 $out = Join-Path $root 'release-stage'
 $target = 'MarioKartSuperCircuitRecomp'
 $stageName = "$target-windows-x64-v$Version"
@@ -107,8 +108,10 @@ New-Item -ItemType Directory -Force -Path $out | Out-Null
     -DSDL2_LIBRARY='C:/msys64/mingw64/lib/libSDL2.dll.a'
 if ($LASTEXITCODE -ne 0) { throw "Release configure failed ($LASTEXITCODE)." }
 
-& "$mingwBin\cmake.exe" --build $build --target $target --parallel $Jobs
-if ($LASTEXITCODE -ne 0) { throw "Release build failed ($LASTEXITCODE)." }
+if (-not $SkipBuild) {
+    & "$mingwBin\cmake.exe" --build $build --target $target --parallel $Jobs
+    if ($LASTEXITCODE -ne 0) { throw "Release build failed ($LASTEXITCODE)." }
+}
 
 $exe = Join-Path $build "$target.exe"
 if (-not (Test-Path -LiteralPath $exe)) { throw "Expected executable is missing: $exe" }
@@ -120,15 +123,11 @@ if ($LASTEXITCODE -ne 0 -or $binaryVersion -ne "$target v$Version") {
 }
 
 if (Test-Path -LiteralPath $stage) {
-    $resolvedStage = (Resolve-Path -LiteralPath $stage).Path
-    $resolvedOut = (Resolve-Path -LiteralPath $out).Path
-    if (-not $resolvedStage.StartsWith("$resolvedOut\", [System.StringComparison]::OrdinalIgnoreCase)) {
-        throw "Refusing to remove stage outside release output: $resolvedStage"
-    }
-    Remove-Item -LiteralPath $resolvedStage -Recurse -Force
+    throw "Release stage already exists: $stage"
 }
 New-Item -ItemType Directory -Force -Path $stage | Out-Null
 Copy-Item -LiteralPath $exe -Destination $stage
+Copy-Item -LiteralPath (Join-Path $engine 'tools/CaptureDiagnostics.cmd') -Destination $stage
 foreach ($dll in $dlls) {
     $source = Join-Path $mingwBin $dll
     if (-not (Test-Path -LiteralPath $source)) { throw "Runtime DLL is missing: $source" }
@@ -199,7 +198,8 @@ It has no affiliation with or endorsement from Nintendo.
    performance and available resolution depend on your GPU. 128x needs substantial
    memory, and GPU limits can reduce the actual output resolution. Supported hosts
    use resident GPU rendering, with a portable CPU fallback.
-6. In Display, choose 16:9 or Adaptive to widen the single-player race view.
+6. Fresh installations use Adaptive Widescreen with Fit to screen for races.
+   In Display, choose 16:9 or Adaptive to override the mod's view choice.
    Native (3:2) keeps side bars on a wide display. Default (Mods) retains the
    widescreen mod's choices; explicit Display choices take precedence.
    The Netplay page's view setting applies separately to online play.
@@ -213,6 +213,10 @@ F1-F9 loads one.
 The ROM and retail GBA BIOS are not included. Supply your own dumps.
 Interactive play has no implicit runtime step limit; only an explicit
 ``--steps`` option applies a deterministic upper bound.
+
+For a launcher or controller problem, run ``CaptureDiagnostics.cmd`` and close
+the launcher normally. It writes ``launcher-diagnostics.log`` and
+``controller-input.jsonl`` beside the game; no ROM is needed for controller capture.
 
 Project: https://github.com/mstan/MarioKartSuperCircuitRecomp
 Engine: https://github.com/mstan/gbarecomp
@@ -237,7 +241,7 @@ if ($forbidden) {
     throw "Forbidden release content detected: $($forbidden.FullName -join ', ')"
 }
 
-if (Test-Path -LiteralPath $zip) { Remove-Item -LiteralPath $zip -Force }
+if (Test-Path -LiteralPath $zip) { throw "Release archive already exists: $zip" }
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 

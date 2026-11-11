@@ -30,6 +30,7 @@ int main(int argc, char** argv) {
     }
     g_runtime_ram_dispatch_hook = &mksc::flash_stack_dispatch;
     gbarecomp::RunOptions opts;
+    opts.launcher_native_save_bytes = 65536;
     std::vector<std::string> args(argv, argv + argc);
 #if defined(GBAGAME_NETPLAY)
     opts.netplay=gbarecomp::make_gba_netplay_launch("mksc-usa",GBARECOMP_NETPLAY_BUILD_ID,
