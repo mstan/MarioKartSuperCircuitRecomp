@@ -17,7 +17,7 @@ id = "adaptive-view"
 name = "Adaptive Widescreen"
 description = "Expand single-player race scenes beyond native 3:2. Choose Fit to screen to follow the window or fullscreen display, or choose a fixed 16:9 view. Menus retain native framing."
 group = "Display"
-default_enabled = false
+default_enabled = true
 
 [[option]]
 feature = "adaptive-view"

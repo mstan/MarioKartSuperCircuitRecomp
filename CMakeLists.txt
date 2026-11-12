@@ -48,6 +48,13 @@ target_include_directories(mksc_margin_objects_tests PRIVATE src "${GBARECOMP_RO
 target_link_gbarecomp_runtime_stack(mksc_margin_objects_tests)
 add_test(NAME mksc_margin_objects COMMAND mksc_margin_objects_tests)
 
+add_executable(mksc_presentation_plugin_tests tests/presentation_plugin_tests.cpp
+    "${GBARECOMP_ROOT}/tools/bios_smoke/dispatch_stub.cpp")
+target_include_directories(mksc_presentation_plugin_tests PRIVATE
+    "${GBARECOMP_ROOT}/src/runtime")
+target_link_gbarecomp_runtime_stack(mksc_presentation_plugin_tests)
+add_test(NAME mksc_presentation_plugins COMMAND mksc_presentation_plugin_tests)
+
 set(GBA_GAME_GENERATED_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/generated" CACHE PATH
     "Generated native corpus (may point at an independent qualification build)")
 if(EXISTS "${GBA_GAME_GENERATED_ROOT}/recompiled.cpp")
@@ -64,7 +71,7 @@ add_executable(MarioKartSuperCircuitRecomp
     src/mksc_extended_view.cpp
     src/mksc_margin_objects.cpp
     src/mods/mksc_adaptive_view_plugin.cpp
-    src/mods/mksc_track_60fps_plugin.cpp
+    src/mods/mksc_presentation_plugins.cpp
     src/mods/mksc_internal_resolution_plugin.cpp
     ${GAME_GENERATED_SOURCES})
 

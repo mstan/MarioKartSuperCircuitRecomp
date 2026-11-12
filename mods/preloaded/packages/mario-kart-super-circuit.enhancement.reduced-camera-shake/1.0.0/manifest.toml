@@ -1,0 +1,24 @@
+format_version = 1
+id = "mario-kart-super-circuit.enhancement.reduced-camera-shake"
+version = "1.0.0"
+name = "Mario Kart: Super Circuit Reduced Camera Shake"
+author = "mstan"
+description = "Removes the grounded camera's terrain bob while retaining airborne camera motion and original kart handling."
+license = "MIT"
+resolver = "declarative"
+save_compatibility = "shared"
+
+[[target]]
+game_id = "mario-kart-super-circuit-us"
+rom_sha1 = "9d327c030c3e2d9007990518594f70c3340ac56f"
+
+[[feature]]
+id = "reduced-camera-shake"
+name = "Reduce Terrain Camera Shake"
+description = "Steady the camera on rough ground and verges. Jumping, collisions, speed and handling keep their original behavior."
+group = "Display"
+default_enabled = false
+
+[[plugin]]
+feature = "reduced-camera-shake"
+id = "mario-kart-super-circuit.reduced-camera-shake"
