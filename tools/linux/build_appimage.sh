@@ -55,6 +55,9 @@ cp "$GAME/LICENSE" "$APPDIR/usr/share/mariokartsupercircuitrecomp/LICENSE"
 cp "$GAME/PERMISSIONS.md" "$APPDIR/usr/share/mariokartsupercircuitrecomp/PERMISSIONS.md"
 python3 "$GAME/tools/collect_licenses.py" "$ENGINE" "$UI" "$APPDIR/usr/share/mariokartsupercircuitrecomp/licenses" \
     --title-source "${TITLE_SOURCE:?}" --engine-source "${ENGINE_SOURCE:?}" --ui-source "${UI_SOURCE:?}"
+# Keep the stock runtime notice and exact source alongside the payload notices.
+cp "$GAME/tools/linux/AppImage-runtime-LICENSE.txt" "$APPDIR/usr/share/mariokartsupercircuitrecomp/licenses/"
+cp "$GAME/tools/linux/AppImage-runtime-SOURCE.txt" "$APPDIR/usr/share/mariokartsupercircuitrecomp/licenses/"
 mkdir -p "$APPDIR/usr/share/mariokartsupercircuitrecomp/licenses/fonts"
 for name in LatoLatin-OFL.txt NotoSansSymbols2-OFL.txt OpenMoji-LICENSE.txt; do
     cp "$GAME/tools/release-licenses/$name" "$APPDIR/usr/share/mariokartsupercircuitrecomp/licenses/fonts/$name"
