@@ -64,7 +64,7 @@ foreach ($required in @(
     (Join-Path $mingwBin 'strip.exe'),
     (Join-Path $engine 'CMakeLists.txt'),
     (Join-Path $engine 'tools\fetch_tcc.ps1'),
-    (Join-Path $engine 'tools\CaptureDiagnostics.cmd'),
+    (Join-Path $root 'tools\CaptureDiagnostics.cmd'),
     (Join-Path $generatedBiosPath 'bios_recompiled.cpp'),
     (Join-Path $generatedBiosPath 'bios_recompiled.h'),
     (Join-Path $root 'recomp\launcher\boxart.tga')
@@ -135,7 +135,7 @@ if (Test-Path -LiteralPath $stage) {
 }
 New-Item -ItemType Directory -Force -Path $stage | Out-Null
 Copy-Item -LiteralPath $exe -Destination $stage
-Copy-Item -LiteralPath (Join-Path $engine 'tools\CaptureDiagnostics.cmd') -Destination $stage
+Copy-Item -LiteralPath (Join-Path $root 'tools\CaptureDiagnostics.cmd') -Destination $stage
 foreach ($dll in $dlls) {
     $source = Join-Path $mingwBin $dll
     if (-not (Test-Path -LiteralPath $source)) { throw "Runtime DLL is missing: $source" }
@@ -243,9 +243,9 @@ Right Shift = Select, and Tab = fast-forward. Shift+F1-F9 saves a state;
 F1-F9 loads one.
 
 For controller diagnostics, run CaptureDiagnostics.cmd from the extracted
-folder. Select your controller and press then release its buttons during the
-15-second capture. Close the launcher normally; the reports are
-launcher-diagnostics.log and controller-input.jsonl beside the executable.
+folder. Reproduce the problem and close the launcher normally. The helper
+writes launcher-diagnostics.log beside the executable with launcher messages,
+SDL version and any controller discovery messages.
 
 The ROM and retail GBA BIOS are not included. Supply your own dumps.
 Interactive play has no implicit runtime step limit; only an explicit
