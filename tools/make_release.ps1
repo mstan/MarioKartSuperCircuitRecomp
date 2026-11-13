@@ -95,7 +95,7 @@ New-Item -ItemType Directory -Force -Path $out | Out-Null
     -DGBARECOMP_RUNTIME_UI_ROOT="$ui" `
     -DGBARECOMP_NETPLAY=ON `
     -DGBARECOMP_GPU_HD_EXPERIMENT=ON `
-    -DGBARECOMP_NATIVE_REGIONS=ON `
+    -DGBARECOMP_NATIVE_REGIONS=OFF `
     -DGBARECOMP_MP2K_IMPLEMENTATION=LLE `
     -DMKSC_MP2K_PROBE=OFF `
     -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF `
@@ -149,6 +149,23 @@ if (-not (Test-Path -LiteralPath (Join-Path $mods 'packages'))) {
 Copy-Item -LiteralPath $mods -Destination (Join-Path $stage 'mods') -Recurse
 Copy-Item -LiteralPath (Join-Path $root 'LICENSE') -Destination $stage
 Copy-Item -LiteralPath (Join-Path $root 'PERMISSIONS.md') -Destination $stage
+# Preserve the authored runtime screen model without shipping development
+# recompiler metadata or any player's presentation choices.
+$sourceToml = [IO.File]::ReadAllText((Join-Path $root 'game.toml'))
+$video = [regex]::Match($sourceToml, '(?ms)^\[video\]\s*\r?\n(.*?)(?=^\[|\z)')
+$screen = [regex]::Match($video.Groups[1].Value,
+    '(?m)^\s*screen\s*=\s*"([A-Za-z0-9_-]+)"\s*(?:#.*)?$')
+if (-not $video.Success -or -not $screen.Success) {
+    throw 'Cannot resolve the authored video.screen for release packaging.'
+}
+$runtimeConfig = "[video]`nscreen = `"$($screen.Groups[1].Value)`"`n"
+[IO.File]::WriteAllText((Join-Path $stage 'game.toml'), $runtimeConfig)
+$fontNotices = @('LatoLatin-OFL.txt', 'NotoSansSymbols2-OFL.txt', 'OpenMoji-LICENSE.txt')
+$fontNoticeStage = Join-Path $stage 'licenses/fonts'
+New-Item -ItemType Directory -Force -Path $fontNoticeStage | Out-Null
+foreach ($notice in $fontNotices) {
+    Copy-Item -LiteralPath (Join-Path $root "tools/release-licenses/$notice") -Destination $fontNoticeStage
+}
 & (Get-Command python.exe).Source (Join-Path $root 'tools\collect_licenses.py') `
     $engine $ui (Join-Path $stage 'licenses') --mingw (Split-Path $mingwBin)
 if ($LASTEXITCODE -ne 0) { throw 'Dependency notice staging failed.' }
@@ -224,7 +241,6 @@ $forbidden = Get-ChildItem -LiteralPath $stage -Recurse -File | Where-Object {
     $_.Extension -in @('.gba', '.sav', '.srm') -or
     $_.Name -ieq 'gba_bios.bin' -or
     $_.Name -in @(
-        'game.toml',
         'rom.cfg',
         'bios.cfg',
         'config.ini',
@@ -292,6 +308,18 @@ try {
     if ($rzArchive.Entries.Count -ne $rzFiles.Count) {
         throw "ZIP entry count mismatch: expected $($rzFiles.Count), got $(
             $rzArchive.Entries.Count)"
+    }
+    $runtimeEntry = $rzArchive.GetEntry('game.toml')
+    if ($null -eq $runtimeEntry) { throw 'Runtime presentation config missing from ZIP.' }
+    $reader = [IO.StreamReader]::new($runtimeEntry.Open(), [Text.Encoding]::UTF8)
+    try { $packagedConfig = $reader.ReadToEnd() } finally { $reader.Dispose() }
+    if ($packagedConfig -cne $runtimeConfig) {
+        throw 'ZIP runtime presentation config differs from the authored profile.'
+    }
+    foreach ($notice in $fontNotices) {
+        if ($null -eq $rzArchive.GetEntry("licenses/fonts/$notice")) {
+            throw "Bundled font notice missing from ZIP: $notice"
+        }
     }
 } finally {
     $rzArchive.Dispose()
