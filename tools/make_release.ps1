@@ -64,6 +64,7 @@ foreach ($required in @(
     (Join-Path $mingwBin 'strip.exe'),
     (Join-Path $engine 'CMakeLists.txt'),
     (Join-Path $engine 'tools\fetch_tcc.ps1'),
+    (Join-Path $root 'tools\CaptureDiagnostics.cmd'),
     (Join-Path $generatedBiosPath 'bios_recompiled.cpp'),
     (Join-Path $generatedBiosPath 'bios_recompiled.h'),
     (Join-Path $root 'recomp\launcher\boxart.tga')
@@ -125,10 +126,16 @@ if (Test-Path -LiteralPath $stage) {
     if (-not $resolvedStage.StartsWith("$resolvedOut\", [System.StringComparison]::OrdinalIgnoreCase)) {
         throw "Refusing to remove stage outside release output: $resolvedStage"
     }
-    Remove-Item -LiteralPath $resolvedStage -Recurse -Force
+    $stageItems = @(Get-Item -LiteralPath $resolvedStage) +
+        @(Get-ChildItem -LiteralPath $resolvedStage -Recurse -Force)
+    if ($stageItems | Where-Object {
+        ($_.Attributes -band [IO.FileAttributes]::ReparsePoint) -or $_.Name -eq '.git'
+    }) { throw 'Refusing to remove a stage containing a link or repository.' }
+    Remove-Item -LiteralPath $resolvedStage -Recurse
 }
 New-Item -ItemType Directory -Force -Path $stage | Out-Null
 Copy-Item -LiteralPath $exe -Destination $stage
+Copy-Item -LiteralPath (Join-Path $root 'tools\CaptureDiagnostics.cmd') -Destination $stage
 foreach ($dll in $dlls) {
     $source = Join-Path $mingwBin $dll
     if (-not (Test-Path -LiteralPath $source)) { throw "Runtime DLL is missing: $source" }
@@ -170,7 +177,15 @@ foreach ($notice in $fontNotices) {
     $engine $ui (Join-Path $stage 'licenses') --mingw (Split-Path $mingwBin)
 if ($LASTEXITCODE -ne 0) { throw 'Dependency notice staging failed.' }
 
-foreach ($entry in @(@((Join-Path $engine 'tools\_toolchain_cache\tcc_extract'), $engine),
+# Keep extraction private to this build when the pinned SDK is shared read-only.
+$toolchainCache = Join-Path $build 'release-toolchain-cache'
+New-Item -ItemType Directory -Force -Path $toolchainCache | Out-Null
+$cachedTcc = Join-Path $engine 'tools\_toolchain_cache\tcc-0.9.27-win64-bin.zip'
+$privateTcc = Join-Path $toolchainCache 'tcc-0.9.27-win64-bin.zip'
+if ((Test-Path -LiteralPath $cachedTcc) -and -not (Test-Path -LiteralPath $privateTcc)) {
+    Copy-Item -LiteralPath $cachedTcc -Destination $privateTcc
+}
+foreach ($entry in @(@((Join-Path $toolchainCache 'tcc_extract'), $build),
                     @((Join-Path $stage 'overlay_toolchain\tcc'), $stage))) {
     if (-not [IO.Path]::GetFullPath($entry[0]).StartsWith(
             [IO.Path]::GetFullPath($entry[1]).TrimEnd('\') + '\', [StringComparison]::OrdinalIgnoreCase)) {
@@ -179,7 +194,7 @@ foreach ($entry in @(@((Join-Path $engine 'tools\_toolchain_cache\tcc_extract'),
 }
 
 & (Join-Path $engine 'tools\fetch_tcc.ps1') `
-    -Toolchain (Join-Path $stage 'overlay_toolchain') -EngineRoot $engine
+    -Toolchain (Join-Path $stage 'overlay_toolchain') -EngineRoot $engine -CacheDir $toolchainCache
 if ($LASTEXITCODE -ne 0) { throw "Overlay toolchain staging failed ($LASTEXITCODE)." }
 
 foreach ($requiredStaged in @(
@@ -227,6 +242,11 @@ defaults: arrows = D-pad, X = A, Z = B, C = L, V = R, Enter = Start,
 Right Shift = Select, and Tab = fast-forward. Shift+F1-F9 saves a state;
 F1-F9 loads one.
 
+For controller diagnostics, run CaptureDiagnostics.cmd from the extracted
+folder. Reproduce the problem and close the launcher normally. The helper
+writes launcher-diagnostics.log beside the executable with launcher messages,
+SDL version and any controller discovery messages.
+
 The ROM and retail GBA BIOS are not included. Supply your own dumps.
 Interactive play has no implicit runtime step limit; only an explicit
 ``--steps`` option applies a deterministic upper bound.
@@ -253,7 +273,7 @@ if ($forbidden) {
     throw "Forbidden release content detected: $($forbidden.FullName -join ', ')"
 }
 
-if (Test-Path -LiteralPath $zip) { Remove-Item -LiteralPath $zip -Force }
+if (Test-Path -LiteralPath $zip) { Remove-Item -LiteralPath $zip }
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
@@ -309,6 +329,7 @@ try {
         throw "ZIP entry count mismatch: expected $($rzFiles.Count), got $(
             $rzArchive.Entries.Count)"
     }
+    if ($null -eq $rzArchive.GetEntry('CaptureDiagnostics.cmd')) { throw 'Controller diagnostics helper missing from ZIP.' }
     $runtimeEntry = $rzArchive.GetEntry('game.toml')
     if ($null -eq $runtimeEntry) { throw 'Runtime presentation config missing from ZIP.' }
     $reader = [IO.StreamReader]::new($runtimeEntry.Open(), [Text.Encoding]::UTF8)
