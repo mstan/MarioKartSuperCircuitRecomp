@@ -12,6 +12,9 @@ p.add_argument('engine', type=Path)
 p.add_argument('ui', type=Path)
 p.add_argument('output', type=Path)
 p.add_argument('--mingw', type=Path)
+p.add_argument('--title-source')
+p.add_argument('--engine-source')
+p.add_argument('--ui-source')
 a = p.parse_args()
 a.output.mkdir(parents=True, exist_ok=True)
 sources = {
@@ -36,35 +39,43 @@ else:
         shutil.copyfile(Path('/usr/share/doc') / package / 'copyright',
                         a.output / f'{package}.txt')
 
-# The shipped overlay compiler is the fixed TinyCC 0.9.27 binary. Include its
-# matching license and complete upstream source alongside it.
-tcc_url = 'https://download.savannah.gnu.org/releases/tinycc/tcc-0.9.27.tar.bz2'
-tcc_sha256 = 'de23af78fca90ce32dff2dd45b3432b2334740bb9bb7b05bf60fdbfc396ceb9c'
-tcc_cache = a.engine / 'tools/_toolchain_cache/tcc-0.9.27.tar.bz2'
-if not tcc_cache.exists():
-    tcc_cache.parent.mkdir(parents=True, exist_ok=True)
-    with urllib.request.urlopen(tcc_url, timeout=60) as response:
-        data = response.read()
-    if hashlib.sha256(data).hexdigest() != tcc_sha256:
-        raise RuntimeError('TinyCC source archive checksum differs')
-    tcc_cache.write_bytes(data)
-if hashlib.sha256(tcc_cache.read_bytes()).hexdigest() != tcc_sha256:
-    raise RuntimeError('Cached TinyCC source archive checksum differs')
-tcc_output = a.output / 'TinyCC'
-tcc_output.mkdir(exist_ok=True)
-shutil.copyfile(tcc_cache, tcc_output / tcc_cache.name)
-with tarfile.open(tcc_cache) as archive:
-    (tcc_output / 'COPYING').write_bytes(archive.extractfile('tcc-0.9.27/COPYING').read())
+# Only the Windows package ships TinyCC. Staged Linux sources are read-only.
+if a.mingw:
+    # The shipped overlay compiler is the fixed TinyCC 0.9.27 binary. Include its
+    # matching license and complete upstream source alongside it.
+    tcc_url = 'https://download.savannah.gnu.org/releases/tinycc/tcc-0.9.27.tar.bz2'
+    tcc_sha256 = 'de23af78fca90ce32dff2dd45b3432b2334740bb9bb7b05bf60fdbfc396ceb9c'
+    tcc_cache = a.engine / 'tools/_toolchain_cache/tcc-0.9.27.tar.bz2'
+    if not tcc_cache.exists():
+        tcc_cache.parent.mkdir(parents=True, exist_ok=True)
+        with urllib.request.urlopen(tcc_url, timeout=60) as response:
+            data = response.read()
+        if hashlib.sha256(data).hexdigest() != tcc_sha256:
+            raise RuntimeError('TinyCC source archive checksum differs')
+        tcc_cache.write_bytes(data)
+    if hashlib.sha256(tcc_cache.read_bytes()).hexdigest() != tcc_sha256:
+        raise RuntimeError('Cached TinyCC source archive checksum differs')
+    tcc_output = a.output / 'TinyCC'
+    tcc_output.mkdir(exist_ok=True)
+    shutil.copyfile(tcc_cache, tcc_output / tcc_cache.name)
+    with tarfile.open(tcc_cache) as archive:
+        (tcc_output / 'COPYING').write_bytes(archive.extractfile('tcc-0.9.27/COPYING').read())
 
 git = 'C:/Program Files/Git/cmd/git.exe' if Path('C:/Program Files/Git/cmd/git.exe').exists() else 'git'
 title = Path(__file__).resolve().parents[1]
 source_lines = ['# Source identities', '',
                 'The title and pinned dependencies include their build scripts. Supply your own ROM/BIOS to regenerate the game corpus.', '']
-for label, root, url in (
-    ('Title', title, None),
-    ('Engine', a.engine, 'https://github.com/mstan/gbarecomp'),
-    ('Launcher', a.ui, 'https://github.com/RetroPortingToolKit/recomp-ui'),
+for label, root, url, supplied in (
+    ('Title', title, None, a.title_source),
+    ('Engine', a.engine, 'https://github.com/mstan/gbarecomp', a.engine_source),
+    ('Launcher', a.ui, 'https://github.com/RetroPortingToolKit/recomp-ui', a.ui_source),
 ):
+    if supplied:
+        import re
+        if not re.fullmatch(r'https://github\.com/[^/]+/[^/]+/tree/[0-9a-f]{40}', supplied):
+            raise RuntimeError('Source URL must identify an exact public Git commit')
+        source_lines.append(f'- {label}: {supplied}')
+        continue
     head = subprocess.check_output([git, '-C', str(root), 'rev-parse', 'HEAD'], text=True).strip()
     if url is None:
         for remote in ('origin', 'mstan'):
@@ -75,7 +86,8 @@ for label, root, url in (
         if url is None:
             raise RuntimeError('Title source remote is missing')
     source_lines.append(f'- {label}: {url}/tree/{head}')
-source_lines += ['', 'Additional engine dependencies are pinned by the engine source tree above.',
-                 f'TinyCC 0.9.27 source is included in TinyCC/{tcc_cache.name}; upstream: {tcc_url}',
-                 f'TinyCC source SHA256: {tcc_sha256}', '']
+source_lines += ['', 'Additional engine dependencies are pinned by the engine source tree above.', '']
+if a.mingw:
+    source_lines += [f'TinyCC 0.9.27 source is included in TinyCC/{tcc_cache.name}; upstream: {tcc_url}',
+                     f'TinyCC source SHA256: {tcc_sha256}', '']
 (a.output / 'SOURCES.md').write_text('\n'.join(source_lines), encoding='utf-8')

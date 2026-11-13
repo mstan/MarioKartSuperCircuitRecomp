@@ -9,6 +9,7 @@
 # test; it is mounted read-only and never enters the image.
 set -euo pipefail
 VERSION="" GAME="" ENGINE="" UI="" OUT="" PRIVATE="" JOBS=4 ENGINE_REV="" GENERATED_BIOS=""
+TITLE_SOURCE="" ENGINE_SOURCE="" UI_SOURCE=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --version) VERSION="$2"; shift 2 ;;
@@ -20,6 +21,9 @@ while [[ $# -gt 0 ]]; do
         --jobs) JOBS="$2"; shift 2 ;;
         --engine-rev) ENGINE_REV="$2"; shift 2 ;;
         --generated-bios) GENERATED_BIOS="$2"; shift 2 ;;
+        --title-source) TITLE_SOURCE="$2"; shift 2 ;;
+        --engine-source) ENGINE_SOURCE="$2"; shift 2 ;;
+        --ui-source) UI_SOURCE="$2"; shift 2 ;;
         *) echo "unknown argument $1"; exit 2 ;;
     esac
 done
@@ -31,6 +35,9 @@ for name in bios_recompiled.cpp bios_recompiled.h bios_dispatch_table.cpp bios_s
     test -f "$GENERATED_BIOS/$name" || { echo "Missing audited generated BIOS input: $GENERATED_BIOS/$name"; exit 1; }
 done
 IMAGE=mariokartsupercircuitrecomp-linux-builder
+[[ -n "$TITLE_SOURCE" ]] || TITLE_SOURCE="https://github.com/mstan/MarioKartSuperCircuitRecomp/tree/$(git -C "$GAME" rev-parse HEAD)"
+[[ -n "$ENGINE_SOURCE" ]] || ENGINE_SOURCE="https://github.com/mstan/gbarecomp/tree/$(git -C "$ENGINE" rev-parse HEAD)"
+[[ -n "$UI_SOURCE" ]] || UI_SOURCE="https://github.com/RetroPortingToolKit/recomp-ui/tree/$(git -C "$UI" rev-parse HEAD)"
 docker build -q -t "$IMAGE" "$GAME/tools/linux" >/dev/null
 mkdir -p "$OUT"
 # Build tree on the Linux filesystem (fast, persistent between releases).
@@ -63,7 +70,8 @@ if [[ -n "$PRIVATE" ]]; then
 fi
 # Build as the invoking user so /out stays owned by them.
 [[ -n "$ENGINE_REV" ]] || ENGINE_REV="$(git -C "$ENGINE" rev-parse --short=12 HEAD)"
-docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -e VERSION="$VERSION" -e JOBS="$JOBS" \
+docker run --rm --cpus "$JOBS" --memory 4g --user "$(id -u):$(id -g)" -e HOME=/tmp -e VERSION="$VERSION" -e JOBS="$JOBS" \
     -e ENGINE_REV="$ENGINE_REV" \
+    -e TITLE_SOURCE="$TITLE_SOURCE" -e ENGINE_SOURCE="$ENGINE_SOURCE" -e UI_SOURCE="$UI_SOURCE" \
     -v "$CACHE:/build" "${MOUNTS[@]}" "$IMAGE" \
     nice -n 10 bash /src/game/tools/linux/build_appimage.sh
