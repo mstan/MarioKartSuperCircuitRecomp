@@ -1,0 +1,4 @@
+AppImage type-2 runtime: https://github.com/AppImage/type2-runtime/tree/fedfad51acc2860b2916a1eef32ba4a500ff31ef
+Official x86_64 runtime SHA256: 617aa77314d57c8b8e4fae9c3f0b35af7b30d5529cb69e98f64f92510ed98a46
+The upstream source includes runtime build scripts, dependency versions and patches.
+The runtime also lists its component licenses through --appimage-help.
