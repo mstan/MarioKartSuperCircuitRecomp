@@ -126,7 +126,12 @@ if (Test-Path -LiteralPath $stage) {
     if (-not $resolvedStage.StartsWith("$resolvedOut\", [System.StringComparison]::OrdinalIgnoreCase)) {
         throw "Refusing to remove stage outside release output: $resolvedStage"
     }
-    Remove-Item -LiteralPath $resolvedStage -Recurse -Force
+    $stageItems = @(Get-Item -LiteralPath $resolvedStage) +
+        @(Get-ChildItem -LiteralPath $resolvedStage -Recurse -Force)
+    if ($stageItems | Where-Object {
+        ($_.Attributes -band [IO.FileAttributes]::ReparsePoint) -or $_.Name -eq '.git'
+    }) { throw 'Refusing to remove a stage containing a link or repository.' }
+    Remove-Item -LiteralPath $resolvedStage -Recurse
 }
 New-Item -ItemType Directory -Force -Path $stage | Out-Null
 Copy-Item -LiteralPath $exe -Destination $stage
@@ -237,6 +242,11 @@ defaults: arrows = D-pad, X = A, Z = B, C = L, V = R, Enter = Start,
 Right Shift = Select, and Tab = fast-forward. Shift+F1-F9 saves a state;
 F1-F9 loads one.
 
+For controller diagnostics, run CaptureDiagnostics.cmd from the extracted
+folder. Select your controller and press then release its buttons during the
+15-second capture. Close the launcher normally; the reports are
+launcher-diagnostics.log and controller-input.jsonl beside the executable.
+
 The ROM and retail GBA BIOS are not included. Supply your own dumps.
 Interactive play has no implicit runtime step limit; only an explicit
 ``--steps`` option applies a deterministic upper bound.
@@ -263,7 +273,7 @@ if ($forbidden) {
     throw "Forbidden release content detected: $($forbidden.FullName -join ', ')"
 }
 
-if (Test-Path -LiteralPath $zip) { Remove-Item -LiteralPath $zip -Force }
+if (Test-Path -LiteralPath $zip) { Remove-Item -LiteralPath $zip }
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
