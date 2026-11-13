@@ -60,6 +60,25 @@ shadow = false
 addr = 0x08030C14
 note = "Opt-in 60 FPS track renderer: hold the affine output selector at DMA0 buffer zero"
 
+# Camera-only terrain bob masks in sub_804B4BC. The opt-in presentation plugin
+# masks out rough-surface flags here; the separate airborne-height branches
+# and all racer/collision updates retain their original instructions.
+[[thumb_alu_immediate_override]]
+addr = 0x0804BA4E
+note = "Optional grounded-camera terrain bob: normal view"
+[[thumb_alu_immediate_override]]
+addr = 0x0804BBD2
+note = "Optional grounded-camera terrain bob: settling view"
+[[thumb_alu_immediate_override]]
+addr = 0x0804BE7A
+note = "Optional grounded-camera terrain bob: transition view"
+[[thumb_alu_immediate_override]]
+addr = 0x0804BEC6
+note = "Optional grounded-camera terrain bob: lowered view"
+[[thumb_alu_immediate_override]]
+addr = 0x0804BF36
+note = "Optional grounded-camera terrain bob: return view"
+
 # The flash-identification routine at 0x08061390 copies this four-byte
 # `ldrb r0, [r0]; bx lr` helper to its stack frame and calls it in Thumb mode.
 # The mapping is verified from the ROM copy loop at 0x080615D8 and the strict

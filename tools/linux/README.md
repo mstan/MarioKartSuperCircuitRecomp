@@ -40,3 +40,9 @@ Adaptive fits the window or fullscreen display. **Native (3:2)** keeps side
 bars on a wide display. **Default (Mods)** retains the Adaptive Widescreen
 mod's Fit to screen / 16:9 selection; explicit Display choices take precedence.
 The Netplay page has its own view setting for online play.
+
+Fresh profiles use Adaptive Widescreen with Fit to screen. Existing aspect and
+mod choices are preserved. `game.toml` seeds the authored frontlit screen model
+without development configuration; an existing runtime profile is retained.
+Primary and alternate controller bindings can each hold the same action.
+Reduce Terrain Camera Shake is optional and preserves airborne camera motion.

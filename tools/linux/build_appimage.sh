@@ -31,7 +31,7 @@ cmake -S "$GAME" -B /build/mksc -G Ninja -DCMAKE_BUILD_TYPE=Release \
     -DGBARECOMP_ROOT="$ENGINE" -DRECOMP_UI_ROOT="$UI" -DGBARECOMP_RUNTIME_UI_ROOT="$UI" \
     -DGBARECOMP_GENERATED_BIOS_DIR=/src/bios \
     -DGBARECOMP_SCANLINE_IMPLEMENTATION=HLE -DGBARECOMP_HD_SAMPLER_IMPLEMENTATION=HLE \
-    -DGBARECOMP_GPU_HD_EXPERIMENT=ON -DGBARECOMP_NATIVE_REGIONS=ON \
+    -DGBARECOMP_GPU_HD_EXPERIMENT=ON -DGBARECOMP_NATIVE_REGIONS=OFF \
     -DGBARECOMP_MP2K_IMPLEMENTATION=LLE -DMKSC_MP2K_PROBE=OFF \
     -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
     -DGBARECOMP_BUILD_ORACLE=OFF -DGBARECOMP_ENGINE_REVISION="${ENGINE_REV:?ENGINE_REV is required}" \
@@ -53,7 +53,22 @@ cp -R /build/mksc/assets "$APPDIR/usr/bin/assets"
 cp -R "$GAME/mods/preloaded/packages" "$APPDIR/usr/share/mariokartsupercircuitrecomp/mods/packages"
 cp "$GAME/LICENSE" "$APPDIR/usr/share/mariokartsupercircuitrecomp/LICENSE"
 cp "$GAME/PERMISSIONS.md" "$APPDIR/usr/share/mariokartsupercircuitrecomp/PERMISSIONS.md"
-python3 "$GAME/tools/collect_licenses.py" "$ENGINE" "$UI" "$APPDIR/usr/share/mariokartsupercircuitrecomp/licenses"
+python3 "$GAME/tools/collect_licenses.py" "$ENGINE" "$UI" "$APPDIR/usr/share/mariokartsupercircuitrecomp/licenses" \
+    --title-source "${TITLE_SOURCE:?}" --engine-source "${ENGINE_SOURCE:?}" --ui-source "${UI_SOURCE:?}"
+mkdir -p "$APPDIR/usr/share/mariokartsupercircuitrecomp/licenses/fonts"
+for name in LatoLatin-OFL.txt NotoSansSymbols2-OFL.txt OpenMoji-LICENSE.txt; do
+    cp "$GAME/tools/release-licenses/$name" "$APPDIR/usr/share/mariokartsupercircuitrecomp/licenses/fonts/$name"
+done
+python3 - "$GAME/game.toml" "$APPDIR/usr/share/mariokartsupercircuitrecomp/game.toml" <<'PY'
+from pathlib import Path
+import re, sys
+source = Path(sys.argv[1]).read_text(encoding='utf-8')
+video = re.search(r'(?ms)^\[video\]\s*\r?\n(.*?)(?=^\[|\Z)', source)
+screen = re.search(r'(?m)^\s*screen\s*=\s*"([A-Za-z0-9_-]+)"\s*(?:#.*)?$', video.group(1)) if video else None
+if not screen:
+    raise SystemExit('Cannot resolve authored video.screen')
+Path(sys.argv[2]).write_text('[video]\nscreen = "' + screen.group(1) + '"\n', encoding='utf-8')
+PY
 cp "$GAME/tools/linux/README.md" "$APPDIR/usr/share/mariokartsupercircuitrecomp/README.md"
 cat "$GAME/docs/NETPLAY.md" >> "$APPDIR/usr/share/mariokartsupercircuitrecomp/README.md"
 sed -i "s/@VERSION@/${VERSION}/g" "$APPDIR/usr/share/mariokartsupercircuitrecomp/README.md"
