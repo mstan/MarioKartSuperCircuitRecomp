@@ -134,6 +134,8 @@ identities and local development paths are documented in
 code, copyrighted inputs, saves, and build output remain local and are never
 included in releases.
 
+On macOS (Apple Silicon), see [`tools/macos/BUILD.md`](tools/macos/BUILD.md).
+
 Contributors can run `pwsh tools/test-attract-gameplay.ps1` for the automated
 native acceptance routes and `pwsh tools/make_release.ps1 -Version 0.1.10` to
 build a sanitized Windows package. The Linux AppImage build is documented in
