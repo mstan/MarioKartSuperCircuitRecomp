@@ -144,13 +144,19 @@ target_include_directories(MarioKartSuperCircuitRecomp PRIVATE
     "${GBARECOMP_ROOT}/src/runtime"
     "${GBARECOMP_ROOT}/src/debug")
 
-target_link_libraries(MarioKartSuperCircuitRecomp PRIVATE
-    "-Wl,--start-group"
-    gbarecomp_runtime
-    gbarecomp_debug
-    gbarecomp_gba
-    gbarecomp_armv4t
-    "-Wl,--end-group")
+if(APPLE)
+    # Apple's ld64 resolves archive cycles itself and rejects --start-group.
+    target_link_libraries(MarioKartSuperCircuitRecomp PRIVATE
+        gbarecomp_runtime gbarecomp_debug gbarecomp_gba gbarecomp_armv4t)
+else()
+    target_link_libraries(MarioKartSuperCircuitRecomp PRIVATE
+        "-Wl,--start-group"
+        gbarecomp_runtime
+        gbarecomp_debug
+        gbarecomp_gba
+        gbarecomp_armv4t
+        "-Wl,--end-group")
+endif()
 
 target_compile_definitions(MarioKartSuperCircuitRecomp PRIVATE
     MKSC_VERSION="${PROJECT_VERSION}"
